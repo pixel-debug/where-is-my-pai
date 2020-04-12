@@ -11,6 +11,7 @@ gcc galaxian.c  -lGL -lglut -lGLEW -lGLU -lSOIL -lm
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+#include <math.h>
 
 
 
@@ -147,7 +148,7 @@ void inicializa() {
     idVilao[5] = carregaTextura("sheet_vilao_6.png");
     
     idmenuzin = carregaTextura("dados_de_jogo.png");
-    
+     
     idPensao = carregaTextura("pensao.png");
     
     idLose = carregaTextura("lose.png");
@@ -156,6 +157,12 @@ void inicializa() {
     
     idBusao = carregaTextura("carro.png");
 }
+
+coordenada itemglobal;
+int modoitem;
+int modotiro = 0;
+int quantidadeDeTiro = 0;
+
 
 void Background(){
 
@@ -202,7 +209,7 @@ void Background(){
 
         glEnd();
 
-        glBindTexture(GL_TEXTURE_2D, idcaixa[0]);
+        glBindTexture(GL_TEXTURE_2D, idcaixa[modotiro]);
                                                  /*-----------------------------------
                                                      COLOCA O BACKGROUNDIZINHO MENU
                                                  -----------------------------------*/
@@ -251,6 +258,8 @@ void lose(){
         glEnd();
     }
 }
+
+
 
 
 void Onibus(int xbus, int ybus){
@@ -303,6 +312,101 @@ void Protagonista(float passo, float sentido){
 
     glEnd();
 }
+
+
+
+
+
+void geraItem(coordenada item,int modo){
+      if(modo == 1)
+        glBindTexture(GL_TEXTURE_2D, idcaixa[1]);   //0 para o tiro do inimigo
+      if(modo == 2)
+        glBindTexture(GL_TEXTURE_2D, idcaixa[2]);  //1 para o tiro do prota
+      if(modo == 3)
+        glBindTexture(GL_TEXTURE_2D, idboleto);  //1 para o tiro do prota
+
+        glBegin( GL_POLYGON );
+            
+            glTexCoord2f(0, 1);
+            glVertex3f(item.x, item.y, 0.0);
+
+            glTexCoord2f(0, 0);
+            glVertex3f(item.x, item.y - 15, 0.0);
+
+            glTexCoord2f(1, 0);
+            glVertex3f(item.x + 10, item.y -15, 0.0);
+
+            glTexCoord2f(1, 1);
+            glVertex3f(item.x + 10, item.y, 0.0);
+
+            glEnd();
+    
+
+}
+
+void itemPego(coordenada itemn, int item){
+                                        /*-------------------------------------------------
+                                                    QUANDO ACERTA O HEROI 
+                                         -------------------------------------------------*/
+    if((itemn.x + 7) >= protago.x && (itemn.x + 7) <= (protago.x + larg_personagens) ){ //hitbox em x e em y, melhores valores
+        if((itemn.y + 10) <= protago.y && (itemn.y + 10) >= (protago.y - alt_personagens) ){
+          itemglobal.x = -159;
+          itemglobal.y = -159;
+          if(item == 1){
+            modotiro = 1;
+            quantidadeDeTiro = 3;
+          }
+          if(item == 2){
+            modotiro = 2;
+            quantidadeDeTiro =3;
+          }
+          if(item == 3){
+            if(vidas < 3)
+              vidas++;
+          }
+          
+        }
+    }
+}
+
+int escolheModo (){
+  int item = rand()%100;
+  if(item <= 9)
+    return 1;
+  else if(item < 19)
+    return 2;
+  else if(item < 29)
+    return 3;
+  else 
+    return 0;
+}
+
+void item(coordenada vilua, int i){
+  
+
+  itemglobal.y -= 0.06;
+
+  itemglobal.x += (sin(itemglobal.y/6)/10);
+
+  if(sai[i] == 1 ){
+    if(vilua.x == xvilaodefault[i] && vilua.y == yvilaodefault[i]){
+        modoitem = escolheModo();
+        itemglobal.x = vilua.x;
+        itemglobal.y = vilua.y;
+      }
+    
+    if(modoitem && itemglobal.x >= -95){
+      geraItem(itemglobal, modoitem);
+      itemPego(itemglobal,modoitem);
+    }
+  }
+}
+
+
+
+
+
+
 
 void viloesAleatorios(){
                                     /*--------------------------------
@@ -411,7 +515,7 @@ void atira(int xtiro, int ytiro, int shape){
                                 LÊ O SPRITE DO TIRO E DETERMINA SUA TRAGETÓRIA
                               -------------------------------------------------*/
     if(shape)
-        glBindTexture(GL_TEXTURE_2D, idtiro1[0]);  //1 para o tiro do prota
+        glBindTexture(GL_TEXTURE_2D, idtiro1[modotiro]);  //1 para o tiro do prota
 
     else
     glBindTexture(GL_TEXTURE_2D, idPensao);   //0 para o tiro do inimigo
@@ -611,6 +715,7 @@ void vilao_impacto(){
         impacto(i, vilua[i]);
         vilao(vilua[i], passo_vilao[i] , sentido_vilao[i], i );
         pensao(vilua[i] , i);
+        item(vilua[i], i);
     }
       
 
@@ -684,6 +789,7 @@ void reinicia(){
     protago.y = -76;
 }
 
+
 void desenha() {
    
     glClear(GL_COLOR_BUFFER_BIT);
@@ -720,7 +826,9 @@ void redimensiona(int w, int h) {
 void teclasLenvatadas(unsigned char key, int x, int y){
     switch (key){
         case 32:
-            
+            quantidadeDeTiro--;
+            if(quantidadeDeTiro == 0)
+              modotiro = 0;
             break;
     }
 }
@@ -781,7 +889,7 @@ int main(int argc, char** argv) {
     glutDisplayFunc(desenha);
     glutIdleFunc(atualiza);
 
-
+  
     glutKeyboardUpFunc(teclasLenvatadas);
 
     viloesAleatorios();
@@ -792,6 +900,3 @@ int main(int argc, char** argv) {
 
     return 0;
 }
-
- 
- 
