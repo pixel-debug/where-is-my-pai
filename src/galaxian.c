@@ -39,8 +39,8 @@ const int alt_personagens = 24;
 const int larg_personagens = 20;
 const float alt_larg_sheet = 0.25;
 
-const int larg_onibus = 80;
-const int alt_onibus = 100;
+const int larg_onibus = 30;
+const int alt_onibus = 50;
 // quando acionada a tecla r este seão os valores default
 const int xvilaodefault[16] = {80, 72, 57, 47, 27, 37, 16, 7,
                                 -80, -72, -47, -57, -27, -37, -7, -16};
@@ -85,7 +85,7 @@ int xvilao[16] = {80, 72, 57, 47, 27, 37, 16, 7,
 int yvilao[16] = {30, 60, 30, 60, 60, 30, 30, 60,
                  60, 30, 30, 60, 30, 60, 30, 60};
 
-int xbusao = 95;
+int xbusao = -95;
 int ybusao;
                                   /*---------------------------------------------------
                                                     carregando texturas
@@ -152,9 +152,7 @@ void inicializa() {
     idPensao = carregaTextura("pensao.png");
     
     idLose = carregaTextura("lose.png");
-    
-
-    
+       
     idBusao = carregaTextura("carro.png");
 }
 
@@ -722,32 +720,13 @@ void vilao_impacto(){
 }
 void andaBusao(){
     
-        coordenada vilua[16];          
-        if(xbusao <= 95 && xbusao != 0){
-            xbusao -= 1;
-        }
+    if(vidas >= -1){               
+        if(xbusao >= -95 && xbusao <= 100 ){
+            xbusao += 1;
 
-        if(xbusao == 10 ){
-           
-            while(controle_velocidade_onibus >= 1 && controle_velocidade_onibus <= 7){
-                xbusao -= 0.15;
-                   /*  for (int i = 0; i < 16; ++i){   
-                        rage(i, vilua[i]);
-                        impacto(i, vilua[i]);
-                        vilao(vilua[i], passo_vilao[i] , sentido_vilao[i], i );
-                        pensao(vilua[i] , i);
-                     }*/
-            }
-            
-            while(controle_velocidade_onibus > 7 ){
-                
-                    xbusao -=1;
-                
-            }controle_velocidade_onibus++;
-            
+        
         }
-        
-        
+      }
         Onibus(xbusao, ybusao);
         
     }
@@ -787,6 +766,8 @@ void reinicia(){
  
     protago.x = 0;
     protago.y = -76;
+
+    xbusao = -95;
 }
 
 
@@ -796,7 +777,7 @@ void desenha() {
     glEnable(GL_TEXTURE_2D);
 
     Background();
-  //  andaBusao();
+    andaBusao();
    
     vilao_impacto();
 
@@ -833,6 +814,22 @@ void teclasLenvatadas(unsigned char key, int x, int y){
     }
 }
 
+void teclas(unsigned char key, int x, int y){
+  if(key == GLUT_KEY_RIGHT){
+    andaHorizontal(1, 2);
+  }
+  if(key == GLUT_KEY_LEFT){
+    andaHorizontal(0, 1);
+  }
+  if(key == GLUT_KEY_UP){
+     passo = 1;
+     sentido = 0;
+  }
+  if(key == GLUT_KEY_DOWN){
+    passo = 1;
+    sentido = 3;
+  }
+}
 
 void teclado(unsigned char key, int x, int y) {
     switch (key) {
@@ -842,24 +839,14 @@ void teclado(unsigned char key, int x, int y) {
     case 'r':
         reinicia();
         break;
-    case 'a':
-        andaHorizontal(0, 1);
+ /*   case 'p':
+        pausa();
         break;
-    case 'd':
-        andaHorizontal(1, 2);
-        break;
-    case 'w':    // vira para cima
-        passo = 1;
-        sentido = 0;
-        break;
-    case 's':   //vira de costas
-        passo = 1;
-        sentido = 3;
-        break; 
+*/
     case 32:   //espaço
-    passo = 2;        //coordenadas do sheet
-    sentido = 0; 
-    if(ytiroProta >= 100 || ytiroProta == -80){    // primeiro e segundo tiro iniciais
+        passo = 2;        //coordenadas do sheet
+        sentido = 0; 
+        if(ytiroProta >= 100 || ytiroProta == -80){    // primeiro e segundo tiro iniciais
                 xtiroProta = protago.x;
                 ytiroProta= -80;
                 tiro = 0;
@@ -889,7 +876,8 @@ int main(int argc, char** argv) {
     glutDisplayFunc(desenha);
     glutIdleFunc(atualiza);
 
-  
+    glutSpecialFunc(teclas);
+
     glutKeyboardUpFunc(teclasLenvatadas);
 
     viloesAleatorios();
