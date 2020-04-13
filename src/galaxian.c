@@ -39,8 +39,8 @@ const int alt_personagens = 24;
 const int larg_personagens = 20;
 const float alt_larg_sheet = 0.25;
 
-const int larg_onibus = 30;
-const int alt_onibus = 50;
+const int larg_carro = 30;
+const int alt_carro = 50;
 // quando acionada a tecla r este seão os valores default
 const int xvilaodefault[16] = {80, 72, 57, 47, 27, 37, 16, 7,
                                 -80, -72, -47, -57, -27, -37, -7, -16};
@@ -85,8 +85,8 @@ int xvilao[16] = {80, 72, 57, 47, 27, 37, 16, 7,
 int yvilao[16] = {30, 60, 30, 60, 60, 30, 30, 60,
                  60, 30, 30, 60, 30, 60, 30, 60};
 
-int xbusao = -95;
-int ybusao;
+int xcarro = -250;
+int ycarro;
                                   /*---------------------------------------------------
                                                     carregando texturas
                                   ----------------------------------------------------*/
@@ -98,7 +98,7 @@ GLuint idmenuzin;
 GLuint idPensao;
 GLuint idLose;
 GLuint idcaixa[3];
-GLuint idBusao;
+GLuint idCarro;
 GLuint idboleto;
 
 
@@ -153,7 +153,7 @@ void inicializa() {
     
     idLose = carregaTextura("lose.png");
        
-    idBusao = carregaTextura("carro.png");
+    idCarro = carregaTextura("carro.png");
 }
 
 coordenada itemglobal;
@@ -260,8 +260,8 @@ void lose(){
 
 
 
-void Onibus(int xbus, int ybus){
-    glBindTexture(GL_TEXTURE_2D, idBusao);
+void Carro(int xcarro, int ycarro){
+    glBindTexture(GL_TEXTURE_2D, idCarro);
                                              /*----------------------------------
                                                   LÊ O SPRITE DO BUSAO E O
                                                    MOVIMENTA
@@ -270,16 +270,16 @@ void Onibus(int xbus, int ybus){
     glBegin( GL_POLYGON );
         
         glTexCoord2f(0, 1);
-        glVertex3f(xbus , ybus, 0.0); //coordenadas iniciais na tela
+        glVertex3f(xcarro , ycarro, 0.0); //coordenadas iniciais na tela
 
         glTexCoord2f(0, 0);
-        glVertex3f(xbus, ybus - alt_onibus , 0.0);
+        glVertex3f(xcarro, ycarro - alt_carro , 0.0);
 
         glTexCoord2f(1, 0);
-        glVertex3f(xbus + larg_onibus, ybus - alt_onibus, 0.0);
+        glVertex3f(xcarro + larg_carro, ycarro - alt_carro, 0.0);
 
         glTexCoord2f(1 , 1);
-        glVertex3f(xbus + larg_onibus, ybus, 0.0);
+        glVertex3f(xcarro + larg_carro, ycarro, 0.0);
 
     glEnd();
 }
@@ -718,16 +718,19 @@ void vilao_impacto(){
       
 
 }
-void andaBusao(){
+void andaCarro(){
+ 
     
-    if(vidas >= -1){               
-        if(xbusao >= -95 && xbusao <= 100 ){
-            xbusao += 1;
-
-        
+        if(xcarro >= -250 ){
+            xcarro += 1;
         }
-      }
-        Onibus(xbusao, ybusao);
+        if(xcarro == 400){
+          xcarro = -250;
+          
+        }
+      
+    
+        Carro(xcarro, ycarro);
         
     }
     
@@ -767,7 +770,7 @@ void reinicia(){
     protago.x = 0;
     protago.y = -76;
 
-    xbusao = -95;
+    xcarro = -250;
 }
 
 
@@ -777,7 +780,7 @@ void desenha() {
     glEnable(GL_TEXTURE_2D);
 
     Background();
-    andaBusao();
+    andaCarro();
    
     vilao_impacto();
 
