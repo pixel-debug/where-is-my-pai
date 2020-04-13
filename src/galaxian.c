@@ -1,3 +1,4 @@
+ 
 /*---------------------------------------------------
 gcc galaxian.c  -lGL -lglut -lGLEW -lGLU -lSOIL -lm
 ./a.out
@@ -41,6 +42,10 @@ const float alt_larg_sheet = 0.25;
 
 const int larg_carro = 30;
 const int alt_carro = 50;
+
+const int larg_corvo = 25;
+const int alt_corvo = 25;
+const float alt_larg_corvo = 0.25;
 // quando acionada a tecla r este seão os valores default
 const int xvilaodefault[16] = {80, 72, 57, 47, 27, 37, 16, 7,
                                 -80, -72, -47, -57, -27, -37, -7, -16};
@@ -85,6 +90,11 @@ int xvilao[16] = {80, 72, 57, 47, 27, 37, 16, 7,
 int yvilao[16] = {30, 60, 30, 60, 60, 30, 30, 60,
                  60, 30, 30, 60, 30, 60, 30, 60};
 
+int xcorvo = 95;
+int ycorvo = 80;
+int xavoa = 0;
+int yavoa = 1;
+
 int xcarro = -250;
 int ycarro;
                                   /*---------------------------------------------------
@@ -100,7 +110,7 @@ GLuint idLose;
 GLuint idcaixa[3];
 GLuint idCarro;
 GLuint idboleto;
-
+GLuint idCorvo;
 
 GLuint carregaTextura(const char* arquivo) {
     GLuint idTextura = SOIL_load_OGL_texture(
@@ -154,6 +164,8 @@ void inicializa() {
     idLose = carregaTextura("lose.png");
        
     idCarro = carregaTextura("carro.png");
+
+    idCorvo = carregaTextura("corvo.png");
 }
 
 coordenada itemglobal;
@@ -284,6 +296,29 @@ void Carro(int xcarro, int ycarro){
     glEnd();
 }
 
+void Corvo(int xcorvo, int ycorvo){
+    glBindTexture(GL_TEXTURE_2D, idCorvo);
+                                             /*----------------------------------
+                                                  LÊ O SPRITE DO CORVO E O
+                                                  FAZ AVOÁ
+                                              -----------------------------------*/
+    
+    glBegin( GL_POLYGON );
+        
+        glTexCoord2f(xavoa, yavoa);
+        glVertex3f(xcorvo , ycorvo, 0.0); //coordenadas iniciais na tela
+
+        glTexCoord2f(xavoa, yavoa - alt_larg_corvo);
+        glVertex3f(xcorvo, ycorvo - alt_corvo , 0.0);
+
+        glTexCoord2f(xavoa + alt_larg_corvo, yavoa - alt_larg_corvo);
+        glVertex3f(xcorvo + larg_corvo, ycorvo - alt_corvo, 0.0);
+
+        glTexCoord2f(xavoa + alt_larg_corvo , yavoa);
+        glVertex3f(xcorvo + larg_corvo, ycorvo, 0.0);
+
+    glEnd();
+}
 
 void Protagonista(float passo, float sentido){
     glBindTexture(GL_TEXTURE_2D, idProta[vidas]);
@@ -733,7 +768,21 @@ void andaCarro(){
         Carro(xcarro, ycarro);
         
     }
-    
+void VoaCorvo(){
+
+  
+  if(controle_velocidade_corvo % 5 == 0){
+    if(xavoa == 3)
+      xavoa = 0;
+    else 
+      xavoa ++;
+     
+  }    
+    if(xcorvo <= 95){
+        xcorvo -= 1;
+  }
+  Corvo(xcorvo, ycorvo);
+}
 void reinicia(){
                                         /*-------------------------------------------------
                                             REINICIA O JOGO QUANDO ACIONADA A TELA 'R'
@@ -781,7 +830,7 @@ void desenha() {
 
     Background();
     andaCarro();
-   
+    VoaCorvo();
     vilao_impacto();
 
 
