@@ -16,6 +16,7 @@ gcc galaxian.c  -lGL -lglut -lGLEW -lGLU -lSOIL -lm
 
 
 
+
                                 /*---------------------------------------------------
                                   -> texturas que serão usadas
                                   -> eixos de rotação
@@ -55,6 +56,7 @@ const int yvilaodefault[16] = {30, 60, 30, 60, 60, 30, 30, 60,
 int controle_velocidade_vilao;
 int controle_velocidade_prota;
 int controle_velocidade_onibus = 0;
+int controle_velocidade_corvo = 0;
 
 int contador_de_viloes = 16;
 int viloes_aleatorios[16];
@@ -80,7 +82,7 @@ float ysentido_vilao[4] = {0.245, 0.495 , 0.745, 1};
 int xtiroVilao[3] = {140, 140, 140};
 float ytiroVilao[3] = {-100, -100, -100};
 int vidas = 3;
-
+int pontos = 0;
 // vai brotar no meio da tela o maluquinho
 coordenada protago = {0, -76};
 
@@ -90,13 +92,19 @@ int xvilao[16] = {80, 72, 57, 47, 27, 37, 16, 7,
 int yvilao[16] = {30, 60, 30, 60, 60, 30, 30, 60,
                  60, 30, 30, 60, 30, 60, 30, 60};
 
-int xcorvo = 95;
-int ycorvo = 80;
-int xavoa = 0;
-int yavoa = 1;
+int corvox = 95;
+int corvoy = 80;
+int xbate = 0;
+int ybate = 1;
+float xasa[4] = {0, 0.245, 0.5, 0.75};
+float yasa[4] = {0.245, 0.495 , 0.745, 1};
+
+
 
 int xcarro = -250;
 int ycarro;
+
+int clique;
                                   /*---------------------------------------------------
                                                     carregando texturas
                                   ----------------------------------------------------*/
@@ -111,6 +119,7 @@ GLuint idcaixa[3];
 GLuint idCarro;
 GLuint idboleto;
 GLuint idCorvo;
+GLuint idConfirmacao;
 
 GLuint carregaTextura(const char* arquivo) {
     GLuint idTextura = SOIL_load_OGL_texture(
@@ -166,6 +175,8 @@ void inicializa() {
     idCarro = carregaTextura("carro.png");
 
     idCorvo = carregaTextura("corvo.png");
+
+    idConfirmacao = carregaTextura("mensagem.png");
 }
 
 coordenada itemglobal;
@@ -268,8 +279,31 @@ void lose(){
         glEnd();
     }
 }
+void Confirmacao(int i){
+
+    if(i == 1){        
+        glBindTexture(GL_TEXTURE_2D, idConfirmacao);
+                                                 /*---------------------------
+                                                     COLOCA O BACKGROUND 
+                                                 ----------------------------*/
+            glBegin( GL_QUADS );
+
+            glTexCoord2f(0, 1);
+            glVertex3f(-100.0, 100.0, 0.0);
+
+            glTexCoord2f(0, 0);
+            glVertex3f(-100.0, -100.0, 0.0);
+
+            glTexCoord2f(1, 0);
+            glVertex3f(100.0, -100.0, 0.0);
+
+            glTexCoord2f(1, 1);
+            glVertex3f(100.0, 100.0, 0.0);
 
 
+        glEnd();
+      }
+}
 
 
 void Carro(int xcarro, int ycarro){
@@ -295,8 +329,7 @@ void Carro(int xcarro, int ycarro){
 
     glEnd();
 }
-
-void Corvo(int xcorvo, int ycorvo){
+void Corvo(float xbate, float ybate){
     glBindTexture(GL_TEXTURE_2D, idCorvo);
                                              /*----------------------------------
                                                   LÊ O SPRITE DO CORVO E O
@@ -305,17 +338,17 @@ void Corvo(int xcorvo, int ycorvo){
     
     glBegin( GL_POLYGON );
         
-        glTexCoord2f(xavoa, yavoa);
-        glVertex3f(xcorvo , ycorvo, 0.0); //coordenadas iniciais na tela
+        glTexCoord2f(xbate, ybate);
+        glVertex3f(corvox , corvoy, 0.0); //coordenadas iniciais na tela
 
-        glTexCoord2f(xavoa, yavoa - alt_larg_corvo);
-        glVertex3f(xcorvo, ycorvo - alt_corvo , 0.0);
+        glTexCoord2f(xbate, ybate - alt_larg_corvo);
+        glVertex3f(corvox, corvoy - alt_corvo , 0.0);
 
-        glTexCoord2f(xavoa + alt_larg_corvo, yavoa - alt_larg_corvo);
-        glVertex3f(xcorvo + larg_corvo, ycorvo - alt_corvo, 0.0);
+        glTexCoord2f(xbate + alt_larg_corvo, ybate - alt_larg_corvo);
+        glVertex3f(corvox + larg_corvo, corvoy - alt_corvo, 0.0);
 
-        glTexCoord2f(xavoa + alt_larg_corvo , yavoa);
-        glVertex3f(xcorvo + larg_corvo, ycorvo, 0.0);
+        glTexCoord2f(xbate + alt_larg_corvo , ybate);
+        glVertex3f(corvox + larg_corvo, corvoy, 0.0);
 
     glEnd();
 }
@@ -671,6 +704,7 @@ void impacto(int i, coordenada posicao){
                 ytiroProta = 110; // valor pra y fora da margem de erro
             }
         }
+        pontos++;
     }
 
     SaiDaTela(i, posicao);
@@ -769,19 +803,22 @@ void andaCarro(){
         
     }
 void VoaCorvo(){
-
-  
-  if(controle_velocidade_corvo % 5 == 0){
-    if(xavoa == 3)
-      xavoa = 0;
+    
+  if(controle_velocidade_corvo % 7 == 0){
+    if(xbate == 3)
+      xbate = 0;
     else 
-      xavoa ++;
-     
-  }    
-    if(xcorvo <= 95){
-        xcorvo -= 1;
-  }
-  Corvo(xcorvo, ycorvo);
+      xbate ++;
+     }
+     controle_velocidade_corvo++;
+ 
+    if(corvox <= 95){
+        corvox -= 1;
+    }
+    if(corvox == -500){
+      corvox = 95;
+    }
+  Corvo(xasa[xbate], yasa[ybate]);
 }
 void reinicia(){
                                         /*-------------------------------------------------
@@ -820,8 +857,8 @@ void reinicia(){
     protago.y = -76;
 
     xcarro = -250;
+    corvox = 95;
 }
-
 
 void desenha() {
    
@@ -832,8 +869,7 @@ void desenha() {
     andaCarro();
     VoaCorvo();
     vilao_impacto();
-
-
+    
     singaro(tiro);
     Protagonista(xpasso[passo], ysentido[sentido]);
 
@@ -883,13 +919,35 @@ void teclas(unsigned char key, int x, int y){
   }
 }
 
+void Mouse(int button, int state, int mousex, int mousey){ 
+                                /*----------------------------------------------
+                                   AQUI IRÁ TRATAR OS EVENTOS DO MOUSE PARA
+                                  O MENU PRINCIPAL E MENSAGENS DE CONFIRMAÇÃO
+                                    (REINICIAR E SAIR)
+                                -----------------------------------------------*/
+    coordenada mouse;
+    if (button == GLUT_LEFT_BUTTON)    // quando houver cliques de mouse dentro do quadrado
+         if (state == GLUT_DOWN) {      // desejado o tal evento irá ocorrer
+                  clique = 1;
+                                          // aqui vai apenas desenhar um quadradinho
+                   mouse.x = mousex;
+                   mouse.y = 480-mousey;
+         }
+    glutPostRedisplay();
+}
+
+
 void teclado(unsigned char key, int x, int y) {
     switch (key) {
     case 27:
-        exit(0);
+        Confirmacao(1); // exibe mensagem de confirmação 
+        if(clique == 1 /*&& posição do mouse/quadradinho no yes*/)
+              exit(0);
         break;
     case 'r':
-        reinicia();
+        Confirmacao(1); // exibe mensagem de confirmação 
+        if(clique == 1 /*&& posição do mouse no yes*/)
+             reinicia();
         break;
  /*   case 'p':
         pausa();
@@ -931,7 +989,8 @@ int main(int argc, char** argv) {
     glutSpecialFunc(teclas);
 
     glutKeyboardUpFunc(teclasLenvatadas);
-
+    glutMouseFunc(Mouse);
+     
     viloesAleatorios();
 
     inicializa();
