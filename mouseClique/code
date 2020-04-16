@@ -1,0 +1,129 @@
+#include <SOIL/SOIL.h>
+#include <GL/glew.h>
+#include <GL/freeglut.h>
+#include <stdlib.h>
+#include <stdio.h>//includes the standard library header file
+
+float r,g,b,xm,ym;
+int check;
+
+
+GLuint idFundo;
+
+GLuint carregaTextura(const char* arquivo) {
+    GLuint idTextura = SOIL_load_OGL_texture(
+                           arquivo,
+                           SOIL_LOAD_AUTO,
+                           SOIL_CREATE_NEW_ID,
+                           SOIL_FLAG_INVERT_Y
+                       );
+
+    if (idTextura == 0) {
+        printf("Erro do SOIL: '%s'\n", SOIL_last_result());
+    }
+
+    return idTextura;
+}
+void inicializa() {
+    glClearColor(1, 1, 1, 1);
+
+    // habilita mesclagem de cores, para termos suporte a texturas
+    // com transparência
+    glEnable(GL_BLEND );
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    idFundo = carregaTextura("mensagem.png");
+}
+
+void Fundo(){
+  
+    glBindTexture(GL_TEXTURE_2D, idFundo);
+ //   glRotatef(5, 0, 0.1,1.0);
+
+    glBegin( GL_POLYGON );
+       
+
+
+        glTexCoord2f(0, 1);
+        glVertex3f(-1, 1, 0.0);
+
+        glTexCoord2f(0, 0);
+        glVertex3f(-1, -1, 0.0);
+
+        glTexCoord2f(1, 0);
+        glVertex3f(1, -1, 0.0);
+
+        glTexCoord2f(1, 1);
+        glVertex3f(1, 1, 0.0);
+
+
+       
+
+    glEnd();
+}
+void mouse(int button, int state, int mousex, int mousey){
+    if(button==GLUT_LEFT_BUTTON && state==GLUT_DOWN){
+       check = 1;
+       
+        xm = mousex;
+        ym = 480-mousey;
+        
+            }
+            
+   else if(button==GLUT_RIGHT_BUTTON && state==GLUT_DOWN)//undo(clear)the drawing
+           {
+    glClearColor(1, 1, 1, 0); 
+    glClear(GL_COLOR_BUFFER_BIT);
+      check = 0;        
+     }
+glutPostRedisplay();
+}
+
+void quadrado(){
+    glColor3f(1,0,1); // sets the current drawing (foreground) color to blue 
+    glPointSize(50); // sets the size of points to be drawn (in pixels)
+   
+    glMatrixMode(GL_PROJECTION);// sets the current matrix to projection
+    glLoadIdentity();//multiply the current matrix by identity matrix
+    gluOrtho2D(0.0, 640.0, 0.0, 480.0);//sets the parallel(orthographic) projection of the full frame buffer 
+
+    if(check){      
+       glBegin(GL_POINTS); // writes pixels on the frame buffer with the current drawing color
+       glVertex2i(xm,ym);   // sets vertex
+
+    glEnd();
+        }
+    glFlush();   
+
+}
+void display(void){  
+     glEnable(GL_TEXTURE_2D);
+  
+      glDisable(GL_TEXTURE_2D);
+     glutSwapBuffers();
+     
+}
+void teclado(unsigned char key, int x, int y) {
+    if(key == 27){
+        quadrado();
+        Fundo(); // exibe mensagem de confirmação 
+        if(xm >= 217 && xm <= 260){
+          if(ym >= 280 && ym <= 330)
+              exit(0);
+            }
+    }  
+}
+int main(int argc,char** argv){
+	glutInit(&argc,argv);
+    glutInitWindowSize(640,480);   //sets the width and height of the window in pixels
+    glutInitWindowPosition(10,10);//sets the position of the window in pixels from top left corner 
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);//creates a single frame buffer of RGB color capacity.
+    glutCreateWindow("DDA Line Drawing");//creates the window as specified by the user as above.
+        glutKeyboardFunc(teclado);
+    glClearColor(1, 1, 1, 0); // sets the backgraound color to white light
+    glClear(GL_COLOR_BUFFER_BIT); // clears the frame buffer and set values defined in glClearColor() function call 
+    inicializa();
+    glutDisplayFunc(display);//links the display event with the display event handler(display)
+    glutMouseFunc(mouse);//keyboard event handler
+    glutMainLoop();//loops the current event
+}
