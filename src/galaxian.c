@@ -698,7 +698,7 @@ void impacto(int i, coordenada posicao){
                                             VÊ SE O TIRO ACERTOU O TAL INIMIGO OU NÃO
                                          ----------------------------------------------------*/
     if(atingiu[i]){ // impede que o tiro trave
-        if(xtiroProta >= posicao.x && xtiroProta <= (posicao.x + larg_personagens)){ //intervalo de x
+        if(xtiroProta+5 >= posicao.x && xtiroProta <= (posicao.x + larg_personagens)){ //intervalo de x
             if(ytiroProta >= posicao.y && ytiroProta <= (posicao.y + alt_personagens) && ytiroProta != 104){ // intervalo de y
                 sai[i] = 1;
                 ytiroProta = 110; // valor pra y fora da margem de erro
@@ -902,7 +902,7 @@ void teclasLenvatadas(unsigned char key, int x, int y){
     }
 }
 
-void teclas(unsigned char key, int x, int y){
+void teclas(int key, int x, int y){
   if(key == GLUT_KEY_RIGHT){
     andaHorizontal(1, 2);
   }
