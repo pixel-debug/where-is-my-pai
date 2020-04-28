@@ -94,6 +94,7 @@ float yvilao[16] = {80, 80, 80, 80, 80, 80, 80, 80,
 
 int inicializacao = 16;
 int EmPosicao[16] = {0};
+int carroinicial = 0;
 
 int corvox = 95;
 int corvoy = 80;
@@ -763,7 +764,7 @@ void rage(int i, coordenada vilua){
 }
 
 
-int carroinicial = 0;
+
 void andaCarro(){
 
   if(inicializacao == 0){
@@ -779,7 +780,7 @@ void andaCarro(){
       xcarro +=1;
       for(int i = 8; i<16; i++){
         xvilao[i] = xcarro+3;
-        yvilao[i] = ycarro;
+        yvilao[i] = ycarro-i+8;
       }
     }
     else
