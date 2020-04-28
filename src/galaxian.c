@@ -48,10 +48,10 @@ const int larg_corvo = 25;
 const int alt_corvo = 25;
 const float alt_larg_corvo = 0.25;
 // quando acionada a tecla r este seão os valores default
-const int xvilaodefault[16] = {80, 72, 57, 47, 27, 37, 16, 7,
-                                -80, -72, -47, -57, -27, -37, -7, -16};
-const int yvilaodefault[16] = {30, 60, 30, 60, 60, 30, 30, 60,
-                               60, 30, 30, 60, 30, 60, 30, 60};
+const int xvilaodefault[16] = {-78, 72, -57, 47, 27, -37, -16, 7,
+                80, -72, -47, 57, -27, 37, -7, 16};
+const int yvilaodefault[16] = {60, 60, 60, 60, 60, 60, 60, 60,
+                 30, 30, 30, 30, 30, 30, 30, 30};
 
 int controle_velocidade_vilao;
 int controle_velocidade_prota;
@@ -87,10 +87,13 @@ int pontos = 0;
 coordenada protago = {0, -76};
 
 //posição dos viloes na tela
-int xvilao[16] = {80, 72, 57, 47, 27, 37, 16, 7,
-                -78, -72, -47, -57, -27, -37, -7, -16};
-int yvilao[16] = {30, 60, 30, 60, 60, 30, 30, 60,
-                 60, 30, 30, 60, 30, 60, 30, 60};
+float xvilao[16] = {120, 123, 126, 129, 132, 135, 138, 141,
+                80, -72, -47, 57, -27, 37, -7, 16};
+float yvilao[16] = {80, 80, 80, 80, 80, 80, 80, 80,
+                 30, 30, 30, 30, 30, 30, 30, 30};
+
+int inicializacao = 16;
+int EmPosicao[16] = {0};
 
 int corvox = 95;
 int corvoy = 80;
@@ -103,6 +106,8 @@ float yasa[4] = {0.245, 0.495 , 0.745, 1};
 
 int xcarro = -250;
 int ycarro;
+
+
 
 int clique;
                                   /*---------------------------------------------------
@@ -756,6 +761,82 @@ void rage(int i, coordenada vilua){
         }
     }
 }
+
+
+int carroinicial = 0;
+void andaCarro(){
+
+  if(inicializacao == 0){
+    if(xcarro >= -250 ){
+       xcarro += 1;
+    }
+    if(xcarro == 400){
+      xcarro = -250;        
+    }
+  }      
+  else{
+    if(xcarro <= 0){
+      xcarro +=1;
+      for(int i = 8; i<16; i++){
+        xvilao[i] = xcarro+3;
+        yvilao[i] = ycarro;
+      }
+    }
+    else
+      carroinicial = 1;
+  }
+
+Carro(xcarro, ycarro);
+
+        
+}
+
+void cenaInicial(coordenada vilua, int i){
+  int D = i+1;
+    if(8==D || D <8){
+      if(vilua.x > xvilaodefault[i]){
+        xvilao[i]-=1;
+        andaVilao(vilua, i, 1);
+      }
+      else if(vilua.y > yvilaodefault[i]){
+        yvilao[i]-=1;
+        andaVilao(vilua, i, 3);
+      }
+      else{
+        sentido_vilao[i]=3;
+        passo_vilao[i]= 0;
+        if(EmPosicao[i] == 0)
+          inicializacao--;
+        EmPosicao[i]=1;
+      }
+      
+    }
+    else if(carroinicial){
+        if(vilua.y < 30){
+          yvilao[i]++;
+          andaVilao(vilua, i, 2);
+        }
+        else if(xvilaodefault[i] > 0 && vilua.x < xvilaodefault[i]){
+          xvilao[i]++;
+          andaVilao(vilua, i, 0);
+        }
+        else if(xvilaodefault[i] < 0 && vilua.x > xvilaodefault[i]){
+          xvilao[i]--;
+          andaVilao(vilua, i, 1);
+        }
+        else{
+        sentido_vilao[i]=3;
+        passo_vilao[i]= 0;
+        if(EmPosicao[i] == 0)
+          inicializacao--;
+        EmPosicao[i] =1;
+      }
+        
+    }
+  vilao(vilua, passo_vilao[i] , sentido_vilao[i], i );
+}
+
+
 void vilao_impacto(){
                                         /*-------------------------------------------------
                                             AQUI, FAZE-SE A ATRIBUIÇÃO DAS COORDENADAS,
@@ -778,30 +859,23 @@ void vilao_impacto(){
     contador_de_viloes = num_de_viloes; //quanto tiver apenas 1 = range
 
     for (int i = 0; i < 16; ++i){   //faz a chamada dessas funções para cada personagem
+      if(inicializacao == 0){
         rage(i, vilua[i]);
         impacto(i, vilua[i]);
         vilao(vilua[i], passo_vilao[i] , sentido_vilao[i], i );
         pensao(vilua[i] , i);
         item(vilua[i], i);
-    }
+      }
+      else{
+        cenaInicial(vilua[i],i);
+        
+      }
+          }
       
 
 }
-void andaCarro(){
- 
-    
-        if(xcarro >= -250 ){
-            xcarro += 1;
-        }
-        if(xcarro == 400){
-          xcarro = -250;
-          
-        }
-      
-    
-        Carro(xcarro, ycarro);
-        
-    }
+
+
 void VoaCorvo(){
     
   if(controle_velocidade_corvo % 7 == 0){
@@ -860,20 +934,26 @@ void reinicia(){
     corvox = 95;
 }
 
+
+
 void desenha() {
    
     glClear(GL_COLOR_BUFFER_BIT);
     glEnable(GL_TEXTURE_2D);
 
     Background();
-    andaCarro();
-    VoaCorvo();
     vilao_impacto();
+    andaCarro();
     
-    singaro(tiro);
-    Protagonista(xpasso[passo], ysentido[sentido]);
+    if(inicializacao == 0){
+      VoaCorvo();
+      
+      
+      singaro(tiro);
+      Protagonista(xpasso[passo], ysentido[sentido]);
 
-    lose();
+      lose();
+    }
     glDisable(GL_TEXTURE_2D);
 
     glutSwapBuffers();
