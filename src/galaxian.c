@@ -103,6 +103,10 @@ int ybate = 1;
 float xasa[4] = {0, 0.245, 0.5, 0.75};
 float yasa[4] = {0.245, 0.495 , 0.745, 1};
 
+coordenada itemglobal = {-159, -159};
+int modoitem;
+int modotiro = 0;
+int quantidadeDeTiro = 0;
 
 
 int xcarro = -250;
@@ -185,10 +189,7 @@ void inicializa() {
     idConfirmacao = carregaTextura("mensagem.png");
 }
 
-coordenada itemglobal;
-int modoitem;
-int modotiro = 0;
-int quantidadeDeTiro = 0;
+
 
 
 void Background(){
@@ -460,8 +461,8 @@ void item(coordenada vilua, int i){
 
   itemglobal.x += (sin(itemglobal.y/6)/10);
 
-  if(sai[i] == 1 ){
-    if(vilua.x == xvilaodefault[i] && vilua.y == yvilaodefault[i]){
+  if(sai[i] == 1){
+    if(vilua.x == xvilaodefault[i] && vilua.y == yvilaodefault[i] && itemglobal.y <= -159){
         modoitem = escolheModo();
         itemglobal.x = vilua.x;
         itemglobal.y = vilua.y;
