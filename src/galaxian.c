@@ -92,7 +92,7 @@ float xvilao[16] = {120, 123, 126, 129, 132, 135, 138, 141,
 float yvilao[16] = {80, 80, 80, 80, 80, 80, 80, 80,
                  30, 30, 30, 30, 30, 30, 30, 30};
 
-int inicializacao = 16;
+int inicializacao = 16;//16
 int EmPosicao[16] = {0};
 int carroinicial = 0;
 
@@ -105,9 +105,10 @@ float yasa[4] = {0.245, 0.495 , 0.745, 1};
 
 coordenada itemglobal = {-159, -159};
 int modoitem;
-int modotiro = 0;
+int modotiro = 0; // 0
 int quantidadeDeTiro = 0;
 
+int ladotiro = 0;
 
 int xcarro = -250;
 int ycarro;
@@ -158,7 +159,7 @@ void inicializa() {
 
     idtiro1[0] = carregaTextura("singaro1.png");
     idtiro1[1] = carregaTextura("singaro2.png");
-    idtiro1[2] = carregaTextura("singaro3.png");
+    idtiro1[2] = carregaTextura("singaro3ponto1.png");
     
     idcaixa[0] = carregaTextura("singar1.png");
     idcaixa[1] = carregaTextura("singar2.png");
@@ -583,16 +584,64 @@ void andaVilao(coordenada posicao, int i, int lado){
 
 
 
+
+
 void atira(int xtiro, int ytiro, int shape){
                              /*-------------------------------------------------
                                 LÊ O SPRITE DO TIRO E DETERMINA SUA TRAGETÓRIA
                               -------------------------------------------------*/
-    if(shape)
+    if(shape){
         glBindTexture(GL_TEXTURE_2D, idtiro1[modotiro]);  //1 para o tiro do prota
+      if(modotiro == 2){
+                glBegin( GL_POLYGON );
+            if(ladotiro == 0){
+                     glTexCoord2f(0, 1);
+              glVertex3f(xtiro + 10, ytiro, 0.0);
 
+              glTexCoord2f(0, 0);
+              glVertex3f(xtiro + 10, ytiro - 15, 0.0);
+
+              glTexCoord2f(0.5, 0);
+              glVertex3f(xtiro, ytiro -15, 0.0);
+
+              glTexCoord2f(0.5, 1);
+              glVertex3f(xtiro, ytiro, 0.0);
+            }
+            else if(ladotiro == 1){
+                     glTexCoord2f(1, 1);
+              glVertex3f(xtiro + 10, ytiro, 0.0);
+
+              glTexCoord2f(0.5, 1);
+              glVertex3f(xtiro + 10, ytiro - 15, 0.0);
+
+              glTexCoord2f(0.5, 0);
+              glVertex3f(xtiro, ytiro -15, 0.0);
+
+              glTexCoord2f(1, 0);
+              glVertex3f(xtiro, ytiro, 0.0);
+
+            }
+            
+            else{
+              glTexCoord2f(0.5, 0);
+              glVertex3f(xtiro + 10, ytiro, 0.0);
+
+              glTexCoord2f(1, 0);
+              glVertex3f(xtiro + 10, ytiro - 15, 0.0);
+
+              glTexCoord2f(1, 1);
+              glVertex3f(xtiro, ytiro -15, 0.0);
+
+              glTexCoord2f(0.5, 1);
+              glVertex3f(xtiro, ytiro, 0.0);
+            }
+            glEnd();
+      }
+    }
     else
     glBindTexture(GL_TEXTURE_2D, idPensao);   //0 para o tiro do inimigo
 
+    if(modotiro != 2 || shape == 0){
         glBegin( GL_POLYGON );
             
             glTexCoord2f(0, 1);
@@ -608,19 +657,32 @@ void atira(int xtiro, int ytiro, int shape){
             glVertex3f(xtiro, ytiro, 0.0);
 
             glEnd();
+      }
 }
 
 
-void singaro(int key){        
+
+void singaro(int key){ 
+  if(xtiroProta >= 100 || xtiroProta <= -120 || ytiroProta >= 90){
+    ytiroProta = 120;
+    ladotiro = 0;
+
+  }  
                                          /*-------------------------------------------------
                                             QUANDO ACIONADA A BARRA DE ESPAÇO O TIRO VAI
                                             SAIR DE ONDE O PROTAGONISTA ESTÁ
                                          -------------------------------------------------*/
+    if(key && ladotiro == 1)
+        xtiroProta-= 4;
 
-    if(key && ytiroProta<=100){ //key funciona como booleano
+    else if(key && ladotiro == 2)
+        xtiroProta+= 4;
+
+    else if(key && ytiroProta<=100)  //key funciona como booleano
         ytiroProta+= 4;         //velocidade
-       atira(xtiroProta ,ytiroProta,1); //coordenas do tiro do prota, shape
-    }
+
+
+    atira(xtiroProta ,ytiroProta,1); //coordenas do tiro do prota, shape
 
 }
 
@@ -630,7 +692,7 @@ void pensaoPaga(int xpensao, float ypensao, int i){
                                          -------------------------------------------------*/
     if((xpensao + 7) >= protago.x && (xpensao + 7) <= (protago.x + larg_personagens) ){ //hitbox em x e em y, melhores valores
         if((ypensao + 10) <= protago.y && (ypensao + 10) >= (protago.y - alt_personagens) ){
-            vidas--;
+            //vidas--;
             xtiroVilao[i] = 140; //faz o tiro sumir quando acerta
             ytiroVilao[i] = -150;
         }
@@ -700,15 +762,38 @@ void SaiDaTela(int i,coordenada vilua){
 
 }
 
+//modotiro =1 hollywood
+//2 malboro
+
 void impacto(int i, coordenada posicao){
                                         /*----------------------------------------------------
                                             VÊ SE O TIRO ACERTOU O TAL INIMIGO OU NÃO
                                          ----------------------------------------------------*/
-    if(atingiu[i]){ // impede que o tiro trave
+    if(sai[i] == 0){ // impede que o tiro trave
         if(xtiroProta+5 >= posicao.x && xtiroProta <= (posicao.x + larg_personagens)){ //intervalo de x
-            if(ytiroProta >= posicao.y && ytiroProta <= (posicao.y + alt_personagens) && ytiroProta != 104){ // intervalo de y
+            if(ytiroProta >= posicao.y-10 && ytiroProta <= (posicao.y + alt_personagens)-10 && ytiroProta != 104){ // intervalo de y
                 sai[i] = 1;
-                ytiroProta = 110; // valor pra y fora da margem de erro
+
+                if(modotiro == 1 && ytiroProta >= 60)
+                  ytiroProta = 110;
+
+                if(modotiro == 2){
+                  //printf("ta dando\n");
+                  //if(i == 14)
+                    //sai[15] = 1;
+
+                  if( sai[i+1] && i != 7 && i!= 15 )
+                    sai[i+1] = 1;
+
+                  else if(i != 0 && i != 8 && sai[i-1]){
+                    sai[i-1] = 1;
+                  }
+
+                  ytiroProta = 110;
+                }
+
+                else if(modotiro == 0)
+                  ytiroProta = 110; // valor pra y fora da margem de erro
             }
         }
         pontos++;
@@ -1021,6 +1106,14 @@ void Mouse(int button, int state, int mousex, int mousey){
 
 void teclado(unsigned char key, int x, int y) {
     switch (key) {
+    case 'a':
+        if(modotiro == 2)
+          ladotiro = 1;
+        break;
+    case 'd':
+        if(modotiro == 2)
+          ladotiro = 2;
+        break;
     case 27:
         Confirmacao(1); // exibe mensagem de confirmação 
         if(clique == 1 /*&& posição do mouse/quadradinho no yes*/)
@@ -1042,6 +1135,7 @@ void teclado(unsigned char key, int x, int y) {
                 xtiroProta = protago.x;
                 ytiroProta= -80;
                 tiro = 0;
+                ladotiro = 0;
             }
         tiro = 1;
         modo = (rand()%4)+1;
