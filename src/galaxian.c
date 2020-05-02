@@ -62,7 +62,7 @@ int contador_de_viloes = 16;
 int viloes_aleatorios[16];
 
 int tiro = 0; // usamos como boolean
-int xtiroProta; //coordenada x do tiro do protagonista
+int xtiroProta = 150; //coordenada x do tiro do protagonista
 int ytiroProta= -80; // coordenada y do tiro do protagonista
 int atingiu[16] = {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}; 
 int sai[16] = {0};
@@ -687,6 +687,12 @@ void singaro(int key){
 }
 
 void pensaoPaga(int xpensao, float ypensao, int i){
+  if((xpensao + 7) >= xcarro && (xpensao + 7) <= (xcarro + larg_carro) ){ //hitbox em x e em y, melhores valores
+        if((ypensao + 10) <= ycarro && (ypensao + 10) >= (ycarro - alt_carro) ){
+          xtiroVilao[i] = 140; //faz o tiro sumir quando acerta
+            ytiroVilao[i] = -150;
+        }
+  }
                                         /*-------------------------------------------------
                                                     QUANDO ACERTA O HEROI 
                                          -------------------------------------------------*/
@@ -766,31 +772,20 @@ void SaiDaTela(int i,coordenada vilua){
 //2 malboro
 
 void impacto(int i, coordenada posicao){
+    if(xtiroProta+5 >= xcarro && xtiroProta+5 <= (xcarro + larg_carro) ){
+      if(ytiroProta+10 >= ycarro && ytiroProta+10 <= ycarro+alt_carro)
+        ytiroProta = 110;
+    }
                                         /*----------------------------------------------------
                                             VÊ SE O TIRO ACERTOU O TAL INIMIGO OU NÃO
                                          ----------------------------------------------------*/
     if(sai[i] == 0){ // impede que o tiro trave
-        if(xtiroProta+5 >= posicao.x && xtiroProta <= (posicao.x + larg_personagens)){ //intervalo de x
+        if(xtiroProta+5 >= posicao.x && xtiroProta + 5 <= (posicao.x  + larg_personagens)){ //intervalo de x
             if(ytiroProta >= posicao.y-10 && ytiroProta <= (posicao.y + alt_personagens)-10 && ytiroProta != 104){ // intervalo de y
                 sai[i] = 1;
 
                 if(modotiro == 1 && ytiroProta >= 60)
                   ytiroProta = 110;
-
-                if(modotiro == 2){
-                  //printf("ta dando\n");
-                  //if(i == 14)
-                    //sai[15] = 1;
-
-                  if( sai[i+1] && i != 7 && i!= 15 )
-                    sai[i+1] = 1;
-
-                  else if(i != 0 && i != 8 && sai[i-1]){
-                    sai[i-1] = 1;
-                  }
-
-                  ytiroProta = 110;
-                }
 
                 else if(modotiro == 0)
                   ytiroProta = 110; // valor pra y fora da margem de erro
@@ -1007,7 +1002,7 @@ void reinicia(){
     vidas = 3;
 
     tiro= 0;
-    xtiroProta;
+    xtiroProta = 150;
     ytiroProta = -80;
 
 
