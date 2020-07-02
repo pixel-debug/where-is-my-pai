@@ -39,6 +39,7 @@ typedef struct{
 // foi para corrigir um bug, não entendemos o por quê que funcionou assim, mas tem toda uma logica por trás
 const int alt_personagens = 24;
 const int larg_personagens = 20;
+const float alt_cabecc = 0.11;
 const float alt_larg_sheet = 0.25;
 
 const int larg_carro = 30;
@@ -52,6 +53,8 @@ const int xvilaodefault[16] = {-78, 72, -57, 47, 27, -37, -16, 7,
                 80, -72, -47, 57, -27, 37, -7, 16};
 const int yvilaodefault[16] = {60, 60, 60, 60, 60, 60, 60, 60,
                  30, 30, 30, 30, 30, 30, 30, 30};
+
+
 
 int controle_velocidade_vilao;
 int controle_velocidade_prota;
@@ -105,7 +108,7 @@ float yasa[4] = {0.245, 0.495 , 0.745, 1};
 
 coordenada itemglobal = {-159, -159};
 int modoitem;
-int modotiro = 0; // 0
+int modotiro = 2; // 0
 int quantidadeDeTiro = 0;
 
 int ladotiro = 0;
@@ -237,6 +240,25 @@ void Background(){
 
 
         glEnd();
+
+        glBindTexture(GL_TEXTURE_2D, idProta[vidas]);
+            glBegin( GL_QUADS );
+
+            glTexCoord2f(0.25, 1);
+            glVertex3f(-100, -110, 0.0);
+
+            glTexCoord2f(0.25, 1 - alt_cabecc);
+            glVertex3f(-100, -130, 0.0);
+
+            glTexCoord2f(0.5, 1 - alt_cabecc);
+            glVertex3f(-80, -130, 0.0);
+
+            glTexCoord2f(0.5, 1);
+            glVertex3f(-80, -110, 0.0);
+
+
+        glEnd();
+
 
         glBindTexture(GL_TEXTURE_2D, idcaixa[modotiro]);
                                                  /*-----------------------------------
@@ -698,7 +720,7 @@ void pensaoPaga(int xpensao, float ypensao, int i){
                                          -------------------------------------------------*/
     if((xpensao + 7) >= protago.x && (xpensao + 7) <= (protago.x + larg_personagens) ){ //hitbox em x e em y, melhores valores
         if((ypensao + 10) <= protago.y && (ypensao + 10) >= (protago.y - alt_personagens) ){
-            //vidas--;
+            vidas--;
             xtiroVilao[i] = 140; //faz o tiro sumir quando acerta
             ytiroVilao[i] = -150;
         }
@@ -787,7 +809,7 @@ void impacto(int i, coordenada posicao){
                 if(modotiro == 1 && ytiroProta >= 60)
                   ytiroProta = 110;
 
-                else if(modotiro == 0)
+                else 
                   ytiroProta = 110; // valor pra y fora da margem de erro
             }
         }
