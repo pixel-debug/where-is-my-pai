@@ -1,3 +1,5 @@
+
+ 
  
 /*---------------------------------------------------
 gcc galaxian.c  -lGL -lglut -lGLEW -lGLU -lSOIL -lm
@@ -35,7 +37,16 @@ typedef struct{
     float x;
     float y;
 }coordenada;
+// estrutura e variáveis para El Menu
+struct ponto {
+    float x, y;
+};
 
+int start = 0;
+int creditos = 0;
+
+
+struct ponto posicaoMouse;
 // foi para corrigir um bug, não entendemos o por quê que funcionou assim, mas tem toda uma logica por trás
 const int alt_personagens = 24;
 const int larg_personagens = 20;
@@ -134,6 +145,7 @@ GLuint idCarro;
 GLuint idboleto;
 GLuint idCorvo;
 GLuint idConfirmacao;
+GLuint idMenu;
 
 GLuint carregaTextura(const char* arquivo) {
     GLuint idTextura = SOIL_load_OGL_texture(
@@ -191,8 +203,32 @@ void inicializa() {
     idCorvo = carregaTextura("corvo.png");
 
     idConfirmacao = carregaTextura("mensagem.png");
+
+    idMenu = carregaTextura("menu.png");
 }
 
+void menu() {
+    
+
+    // Começa a usar a textura que criamos
+    glBindTexture(GL_TEXTURE_2D, idMenu);
+     glBegin( GL_QUADS );
+
+            glTexCoord2f(0, 1);
+            glVertex3f(-100.0, 100.0, 0.0);
+
+            glTexCoord2f(0, 0);
+            glVertex3f(-100.0, -140.0, 0.0);
+
+            glTexCoord2f(1, 0);
+            glVertex3f(100.0, -140.0, 0.0);
+
+            glTexCoord2f(1, 1);
+            glVertex3f(100.0, 100.0, 0.0);
+    glEnd();
+    
+    
+}
 
 
 
@@ -1042,8 +1078,7 @@ void reinicia(){
 
 void desenha() {
    
-    glClear(GL_COLOR_BUFFER_BIT);
-    glEnable(GL_TEXTURE_2D);
+    
 
     Background();
     vilao_impacto();
@@ -1058,9 +1093,7 @@ void desenha() {
 
       lose();
     }
-    glDisable(GL_TEXTURE_2D);
-
-    glutSwapBuffers();
+    
 }
 
 
@@ -1103,22 +1136,27 @@ void teclas(int key, int x, int y){
   }
 }
 
-void Mouse(int button, int state, int mousex, int mousey){ 
+void mouse(int button, int state, int x, int y){
                                 /*----------------------------------------------
                                    AQUI IRÁ TRATAR OS EVENTOS DO MOUSE PARA
                                   O MENU PRINCIPAL E MENSAGENS DE CONFIRMAÇÃO
                                     (REINICIAR E SAIR)
                                 -----------------------------------------------*/
-    coordenada mouse;
-    if (button == GLUT_LEFT_BUTTON)    // quando houver cliques de mouse dentro do quadrado
-         if (state == GLUT_DOWN) {      // desejado o tal evento irá ocorrer
-                  clique = 1;
-                                          // aqui vai apenas desenhar um quadradinho
-                   mouse.x = mousex;
-                   mouse.y = 480-mousey;
-         }
-    glutPostRedisplay();
-}
+    if(button==GLUT_LEFT_BUTTON && state==GLUT_DOWN){
+      posicaoMouse.x = x;
+      posicaoMouse.y=y;
+            if(posicaoMouse.x >= 317 && posicaoMouse.x <= 530 && posicaoMouse.y >= 401 && posicaoMouse.y <= 470){ // botão começar
+              start = 1; //ligado
+              //printf("%d\n", start);
+              
+              
+            }
+            if(posicaoMouse.x >= 320 && posicaoMouse.x <= 532 && posicaoMouse.y >= 512 && posicaoMouse.y <= 576){
+              creditos = 1; //ligado
+              //printf("%d creditos\n", creditos);
+            }
+          }
+    }
 
 
 void teclado(unsigned char key, int x, int y) {
@@ -1163,7 +1201,20 @@ void atualiza() {
     glutPostRedisplay();
 }
 
+void jogo(){
+  glClear(GL_COLOR_BUFFER_BIT);
+  glEnable(GL_TEXTURE_2D);
+  if(start == 0){
+    menu();
+  }
+  if(start == 1){
+   
+    desenha();
+  }
+  glDisable(GL_TEXTURE_2D);
 
+  glutSwapBuffers();
+}
 int main(int argc, char** argv) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
@@ -1176,16 +1227,15 @@ int main(int argc, char** argv) {
 
     glutReshapeFunc(redimensiona);
     glutKeyboardFunc(teclado);
-    glutDisplayFunc(desenha);
     glutIdleFunc(atualiza);
-
+    glutDisplayFunc(jogo);
     glutSpecialFunc(teclas);
 
     glutKeyboardUpFunc(teclasLenvatadas);
-    glutMouseFunc(Mouse);
+    glutMouseFunc(mouse);
      
+    
     viloesAleatorios();
-
     inicializa();
 
     glutMainLoop();
