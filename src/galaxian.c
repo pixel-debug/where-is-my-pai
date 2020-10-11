@@ -41,7 +41,6 @@ typedef struct{
 struct ponto {
     float x, y;
 };
-
 int start = 0;
 int creditos = 0;
 
