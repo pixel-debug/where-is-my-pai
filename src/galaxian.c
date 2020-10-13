@@ -41,9 +41,11 @@ typedef struct{
 struct ponto {
     float x, y;
 };
+
 int start = 0;
 int creditos = 0;
-
+int howtopray = 0;
+int volta = 0;
 
 struct ponto posicaoMouse;
 // foi para corrigir um bug, não entendemos o por quê que funcionou assim, mas tem toda uma logica por trás
@@ -145,7 +147,8 @@ GLuint idboleto;
 GLuint idCorvo;
 GLuint idConfirmacao;
 GLuint idMenu;
-
+GLuint idCreditos;
+GLuint idHowtopray;
 GLuint carregaTextura(const char* arquivo) {
     GLuint idTextura = SOIL_load_OGL_texture(
                            arquivo,
@@ -204,6 +207,8 @@ void inicializa() {
     idConfirmacao = carregaTextura("mensagem.png");
 
     idMenu = carregaTextura("menu.png");
+    idCreditos = carregaTextura("creditos.png");
+    idHowtopray = carregaTextura("controle.png");
 }
 
 void menu() {
@@ -228,7 +233,45 @@ void menu() {
     
     
 }
+void howtoplai() {
+    
 
+    // Começa a usar a textura que criamos
+    glBindTexture(GL_TEXTURE_2D, idHowtopray);
+     glBegin( GL_QUADS );
+
+            glTexCoord2f(0, 1);
+            glVertex3f(-100.0, 100.0, 0.0);
+
+            glTexCoord2f(0, 0);
+            glVertex3f(-100.0, -140.0, 0.0);
+
+            glTexCoord2f(1, 0);
+            glVertex3f(100.0, -140.0, 0.0);
+
+            glTexCoord2f(1, 1);
+            glVertex3f(100.0, 100.0, 0.0);
+    glEnd();
+    
+    
+}
+void credritos(){
+  glBindTexture(GL_TEXTURE_2D, idCreditos);
+     glBegin( GL_QUADS );
+
+            glTexCoord2f(0, 1);
+            glVertex3f(-100.0, 100.0, 0.0);
+
+            glTexCoord2f(0, 0);
+            glVertex3f(-100.0, -140.0, 0.0);
+
+            glTexCoord2f(1, 0);
+            glVertex3f(100.0, -140.0, 0.0);
+
+            glTexCoord2f(1, 1);
+            glVertex3f(100.0, 100.0, 0.0);
+    glEnd();
+}
 
 
 void Background(){
@@ -1144,18 +1187,24 @@ void mouse(int button, int state, int x, int y){
     if(button==GLUT_LEFT_BUTTON && state==GLUT_DOWN){
       posicaoMouse.x = x;
       posicaoMouse.y=y;
-            if(posicaoMouse.x >= 317 && posicaoMouse.x <= 530 && posicaoMouse.y >= 401 && posicaoMouse.y <= 470){ // botão começar
-              start = 1; //ligado
-              //printf("%d\n", start);
+      if(posicaoMouse.x >= 321 && posicaoMouse.x <= 520 && posicaoMouse.y >= 341 && posicaoMouse.y <= 400){ // botão começar
+        start = 1; //ligado
               
+      }
+      if(posicaoMouse.x >= 320 && posicaoMouse.x <= 523 && posicaoMouse.y >= 429 && posicaoMouse.y <= 478){ // botão dos créditos
+        creditos = 1; //ligado
               
-            }
-            if(posicaoMouse.x >= 320 && posicaoMouse.x <= 532 && posicaoMouse.y >= 512 && posicaoMouse.y <= 576){
-              creditos = 1; //ligado
-              //printf("%d creditos\n", creditos);
-            }
-          }
+      }
+      if(posicaoMouse.x >= 320 && posicaoMouse.x <= 523 && posicaoMouse.y >= 509 && posicaoMouse.y <= 559){ // botão dos controles
+        howtopray = 1; //ligado
+              
+      }
+      if(posicaoMouse.x >= 7 && posicaoMouse.x <= 137 && posicaoMouse.y >= 13 && posicaoMouse.y <= 78){
+        volta = 1; //volta uma página NÃO ESTÁ IMPLEMENTADOOOOOO     
     }
+     //FALTA A CONFIRMA, A ESC/R/P
+   }
+}
 
 
 void teclado(unsigned char key, int x, int y) {
@@ -1203,13 +1252,21 @@ void atualiza() {
 void jogo(){
   glClear(GL_COLOR_BUFFER_BIT);
   glEnable(GL_TEXTURE_2D);
-  if(start == 0){
+  if(start == 0 ){
     menu();
   }
+  if(howtopray == 1){
+    howtoplai();
+  }
   if(start == 1){
-   
     desenha();
   }
+  if(creditos == 1){
+    credritos();    
+  }
+  
+
+
   glDisable(GL_TEXTURE_2D);
 
   glutSwapBuffers();
@@ -1227,13 +1284,13 @@ int main(int argc, char** argv) {
     glutReshapeFunc(redimensiona);
     glutKeyboardFunc(teclado);
     glutIdleFunc(atualiza);
-    glutDisplayFunc(jogo);
+    
     glutSpecialFunc(teclas);
 
     glutKeyboardUpFunc(teclasLenvatadas);
     glutMouseFunc(mouse);
      
-    
+    glutDisplayFunc(jogo);
     viloesAleatorios();
     inicializa();
 
