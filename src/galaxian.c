@@ -45,7 +45,7 @@ struct ponto {
 int start = 0;
 int creditos = 0;
 int howtopray = 0;
-int volta = 0;
+int volta = 1;
 
 struct ponto posicaoMouse;
 // foi para corrigir um bug, não entendemos o por quê que funcionou assim, mas tem toda uma logica por trás
@@ -130,7 +130,8 @@ int ycarro;
 
 
 
-int clique;
+int clique_sim = 0;
+int clique_nao = 0;
                                   /*---------------------------------------------------
                                                     carregando texturas
                                   ----------------------------------------------------*/
@@ -204,16 +205,16 @@ void inicializa() {
 
     idCorvo = carregaTextura("corvo.png");
 
-    idConfirmacao = carregaTextura("mensagem.png");
+    idConfirmacao = carregaTextura("confirmacao.png");
 
     idMenu = carregaTextura("menu.png");
     idCreditos = carregaTextura("creditos.png");
     idHowtopray = carregaTextura("controle.png");
 }
 
-void menu() {
+void menu(int start) {
     
-
+  if(start == 0){
     // Começa a usar a textura que criamos
     glBindTexture(GL_TEXTURE_2D, idMenu);
      glBegin( GL_QUADS );
@@ -231,11 +232,11 @@ void menu() {
             glVertex3f(100.0, 100.0, 0.0);
     glEnd();
     
-    
+  }
 }
-void howtoplai() {
+void howtoplai(int howtopray) {
     
-
+  if(howtopray == 1){
     // Começa a usar a textura que criamos
     glBindTexture(GL_TEXTURE_2D, idHowtopray);
      glBegin( GL_QUADS );
@@ -252,10 +253,11 @@ void howtoplai() {
             glTexCoord2f(1, 1);
             glVertex3f(100.0, 100.0, 0.0);
     glEnd();
-    
+  }
     
 }
-void credritos(){
+void credritos(int creditos){
+  if(creditos == 1){
   glBindTexture(GL_TEXTURE_2D, idCreditos);
      glBegin( GL_QUADS );
 
@@ -271,6 +273,7 @@ void credritos(){
             glTexCoord2f(1, 1);
             glVertex3f(100.0, 100.0, 0.0);
     glEnd();
+  }
 }
 
 
@@ -1195,15 +1198,18 @@ void mouse(int button, int state, int x, int y){
         creditos = 1; //ligado
               
       }
-      if(posicaoMouse.x >= 320 && posicaoMouse.x <= 523 && posicaoMouse.y >= 509 && posicaoMouse.y <= 559){ // botão dos controles
+      if(posicaoMouse.x >= 320 && posicaoMouse.x <= 523 && posicaoMouse.y >= 509 && posicaoMouse.y <= 559){ // botão dos créditos
         howtopray = 1; //ligado
               
       }
-      if(posicaoMouse.x >= 7 && posicaoMouse.x <= 137 && posicaoMouse.y >= 13 && posicaoMouse.y <= 78){
-        volta = 1; //volta uma página NÃO ESTÁ IMPLEMENTADOOOOOO     
-    }
-     //FALTA A CONFIRMA, A ESC/R/P
-   }
+      if(posicaoMouse.x >= 7 && posicaoMouse.x <= 137 && posicaoMouse.y >= 13 && posicaoMouse.y <= 78){ 
+        volta += 1; //volta uma página     
+      }
+      if(posicaoMouse.x >= 240 && posicaoMouse.x <= 282 && posicaoMouse.y >= 296 && posicaoMouse.y <= 359){ 
+        clique_sim = 1; //confirmacao SIM     
+      }
+      
+}
 }
 
 
@@ -1219,12 +1225,15 @@ void teclado(unsigned char key, int x, int y) {
         break;
     case 27:
         Confirmacao(1); // exibe mensagem de confirmação 
-        if(clique == 1 /*&& posição do mouse/quadradinho no yes*/)
+
+        if(clique_sim == 1 /*&& posição do mouse/quadradinho no yes*/)
+              printf("%dCLIQUE\n", clique_sim);
               exit(0);
+
         break;
     case 'r':
         Confirmacao(1); // exibe mensagem de confirmação 
-        if(clique == 1 /*&& posição do mouse no yes*/)
+        if(clique_sim == 1 /*&& posição do mouse no yes*/)
              reinicia();
         break;
  /*   case 'p':
@@ -1252,19 +1261,21 @@ void atualiza() {
 void jogo(){
   glClear(GL_COLOR_BUFFER_BIT);
   glEnable(GL_TEXTURE_2D);
-  if(start == 0 ){
-    menu();
-  }
-  if(howtopray == 1){
-    howtoplai();
-  }
+  
+  menu(start);
   if(start == 1){
     desenha();
+    volta = 3;
   }
-  if(creditos == 1){
-    credritos();    
+ 
+  credritos(creditos);    
+  howtoplai(howtopray);
+  if(volta %2 == 0){
+    start = 0;
+    creditos = 0;
+    howtopray = 0;
+    volta = 1;
   }
-  
 
 
   glDisable(GL_TEXTURE_2D);
