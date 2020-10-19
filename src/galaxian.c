@@ -1273,15 +1273,15 @@ void mouse(int button, int state, int x, int y){
     if(button==GLUT_LEFT_BUTTON && state==GLUT_DOWN){
       posicaoMouse.x = x;
       posicaoMouse.y=y;
-      if(posicaoMouse.x >= 321 && posicaoMouse.x <= 520 && posicaoMouse.y >= 341 && posicaoMouse.y <= 400){ // botão começar
+      if(posicaoMouse.x >= 667 && posicaoMouse.x <= 801 && posicaoMouse.y >= 386 && posicaoMouse.y <= 435){ // botão começar
         start = 1; //ligado
               
       }
-      if(posicaoMouse.x >= 320 && posicaoMouse.x <= 523 && posicaoMouse.y >= 429 && posicaoMouse.y <= 478){ // botão dos créditos
+      if(posicaoMouse.x >= 671 && posicaoMouse.x <= 800 && posicaoMouse.y >= 550 && posicaoMouse.y <= 610){ // botão dos créditos
         creditos = 1; //ligado
               
       }
-      if(posicaoMouse.x >= 320 && posicaoMouse.x <= 523 && posicaoMouse.y >= 509 && posicaoMouse.y <= 559){ // botão dos créditos
+      if(posicaoMouse.x >= 661 && posicaoMouse.x <= 814 && posicaoMouse.y >= 463 && posicaoMouse.y <= 522){ // botão dos créditos
         howtopray = 1; //ligado
               
       }
@@ -1349,6 +1349,8 @@ void jogo(){
   if(start == 1){
     desenha();
     volta = 3;
+    creditos = 2;
+    howtopray = 2;
   }
  
   credritos(creditos);    
