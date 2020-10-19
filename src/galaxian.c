@@ -66,6 +66,7 @@ const int xvilaodefault[16] = {-78, 72, -57, 47, 27, -37, -16, 7,
 const int yvilaodefault[16] = {60, 60, 60, 60, 60, 60, 60, 60,
                  30, 30, 30, 30, 30, 30, 30, 30};
 
+int vidaBoto = 3;
 
 
 int controle_velocidade_vilao;
@@ -120,7 +121,7 @@ float yasa[4] = {0.245, 0.495 , 0.745, 1};
 
 coordenada itemglobal = {-159, -159};
 int modoitem;
-int modotiro = 2; // 0
+int modotiro = 0; // 0
 int quantidadeDeTiro = 0;
 
 int ladotiro = 0;
@@ -135,6 +136,8 @@ int clique_nao = 0;
                                   /*---------------------------------------------------
                                                     carregando texturas
                                   ----------------------------------------------------*/
+
+GLuint idBoto;                                  
 GLuint idProta[4];
 GLuint idVilao[6];
 GLuint idFundo1;
@@ -210,6 +213,8 @@ void inicializa() {
     idMenu = carregaTextura("menu.png");
     idCreditos = carregaTextura("creditos.png");
     idHowtopray = carregaTextura("controle.png");
+
+    idBoto = carregaTextura("sheet_boto.png");
 }
 
 void menu(int start) {
@@ -605,7 +610,7 @@ void vilao(coordenada posicao, int abssissa, int ordenada, int i){
 
     if(atingiu[i]){ // parametro de atingiu na posição x, 1 desenha e 0 some
          
-         glBindTexture(GL_TEXTURE_2D, idVilao[viloes_aleatorios[i]]);
+        glBindTexture(GL_TEXTURE_2D, idVilao[viloes_aleatorios[i]]);
         
             glBegin( GL_POLYGON );
                 
@@ -1119,15 +1124,93 @@ void reinicia(){
     corvox = 95;
 }
 
+coordenada sheet = {0,1};
+const coordenada dimensoesBoto = {20,40};
+
+void desenhaBoto(coordenada posicao, coordenada sheet){
+glBindTexture(GL_TEXTURE_2D, idBoto);
+            glBegin( GL_POLYGON );
+                
+                glTexCoord2f(sheet.x,sheet.y);
+                glVertex3f(posicao.x,posicao.y,0); 
+
+                glTexCoord2f(sheet.x + alt_larg_sheet,sheet.y);
+                glVertex3f(posicao.x + dimensoesBoto.x , posicao.y,0);
+
+                glTexCoord2f(sheet.x + alt_larg_sheet,sheet.y - alt_larg_sheet);
+                glVertex3f(posicao.x + dimensoesBoto.x , posicao.y - dimensoesBoto.y ,0);
+
+                glTexCoord2f(sheet.x,sheet.y - alt_larg_sheet);
+                glVertex3f(posicao.x, posicao.y - dimensoesBoto.y ,0);
+
+
+                glEnd();
+            
+}
+coordenada posicaoBoto = {0,40};
+
+
+
+int passoBoto = 0;
+int controle = 0;
+coordenada andaBoto(coordenada posicao,int modo){ //1 pra esqueda,2 pra cima ,3 pra baixo, 4 pra direita
+    controle++;
+    if(controle%5 == 0){
+      passoBoto++;
+      if(passoBoto > 3)
+        passoBoto = 0;
+    }
+
+    float sentido[4] = {0,0.25,0.5,0.75};
+    float direcao[4] = {0.25,0.5,0.75,1};
+    coordenada aux;
+    aux.y = direcao[modo];
+    aux.x = sentido[passoBoto];
+
+    return aux;
+    
+}
+void botoSaiDaTela(){
+  if(posicaoBoto.x >= 0){        //anda até o meio 
+            posicaoBoto.x--;
+            sheet = andaBoto(posicaoBoto, 1);
+            
+        }
+        else if(posicaoBoto.y <= 80){
+            posicaoBoto.y++;            //vai até a calçada
+            sheet = andaBoto(posicaoBoto, 2);
+        }
+        else if(posicaoBoto.x >= -120){
+            posicaoBoto.x--;             // sai da tela
+            sheet = andaBoto(posicaoBoto, 1);
+        }
+        else{
+            //atingiu[i] = 0;         //some
+            //andaVilao(vilua, i, 4);
+        }
+}
+
+void vemBoto(){
+  desenhaBoto(posicaoBoto,sheet);
+  botoSaiDaTela();
+        
+    }
+
+
+
 
 
 void desenha() {
    
-    
+    inicializacao = 0;
 
     Background();
-    vilao_impacto();
-    andaCarro();
+    //vilao_impacto();
+    //andaCarro();
+
+    //if(contador_de_viloes == 0){
+    vemBoto();
+    
     
     if(inicializacao == 0){
       VoaCorvo();
