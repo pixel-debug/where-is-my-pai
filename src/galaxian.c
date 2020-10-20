@@ -806,7 +806,7 @@ void pensaoPaga(int xpensao, float ypensao, int i){
                                          -------------------------------------------------*/
     if((xpensao + 7) >= protago.x && (xpensao + 7) <= (protago.x + larg_personagens) ){ //hitbox em x e em y, melhores valores
         if((ypensao + 10) <= protago.y && (ypensao + 10) >= (protago.y - alt_personagens) ){
-            vidas--;
+            //vidas--;
             xtiroVilao[i] = 140; //faz o tiro sumir quando acerta
             ytiroVilao[i] = -150;
         }
@@ -1046,7 +1046,7 @@ void vilao_impacto(){
             num_de_viloes++;
         }
     }
-    contador_de_viloes = num_de_viloes; //quanto tiver apenas 1 = range
+    contador_de_viloes = num_de_viloes; //quanto tiver apenas 1 = rage
 
     for (int i = 0; i < 16; ++i){   //faz a chamada dessas funções para cada personagem
       if(inicializacao == 0){
@@ -1153,7 +1153,7 @@ coordenada posicaoBoto = {0,40};
 
 int passoBoto = 0;
 int controle = 0;
-coordenada andaBoto(coordenada posicao,int modo){ //1 pra esqueda,2 pra cima ,3 pra baixo, 4 pra direita
+coordenada andaBoto(coordenada posicao,int modo){ //1 pra esqueda,2 pra cima ,3 pra baixo, 0 pra direita
     controle++;
     if(controle%5 == 0){
       passoBoto++;
@@ -1184,17 +1184,97 @@ void botoSaiDaTela(){
             posicaoBoto.x--;             // sai da tela
             sheet = andaBoto(posicaoBoto, 1);
         }
-        else{
-            //atingiu[i] = 0;         //some
-            //andaVilao(vilua, i, 4);
+}
+
+int botoVolta(){
+    if(posicaoBoto.x <= 0){
+            posicaoBoto.x++;             // volta da tela
+            sheet = andaBoto(posicaoBoto, 0);
+        }
+    else if(posicaoBoto.y >= 60){
+            posicaoBoto.y--;            //sai da calçada
+            sheet = andaBoto(posicaoBoto, 3);
+        }
+        else 
+          return 1;
+    return 0;
+}
+
+
+void rageBoto(coordenada posicao){
+
+  if(modo == 1){                          // qual direção e sentido ele vai
+            if(posicao.y >= 80)                   // limita atè onde vai
+                modo = (rand()%3)+2;            // sorteia próxima direção impedindo que seja 1 novamente
+            posicaoBoto.y += 2;                     // ele vai pra cima, o 2 é velocidade
+            sheet = andaBoto(posicao, 2);
+        }
+        else if(modo == 2){
+            if(posicao.x <= -90 && posicao.y <80)   //liimita até onde vai
+                modo = (rand()%4)+1;
+            
+            else if(posicao.x <= -90)              //impede que vá mais pra direita, em cima dos prédios
+                modo = (rand()%2)+3;
+            posicaoBoto.x -= 2;                     //vai para a esquerda
+            
+            sheet = andaBoto(posicao, 1);
+        }
+        else if(modo == 3){
+            if(posicao.y <= 30 && posicao.y < 80)
+                modo = (rand()%4)+1;
+            
+            else if (posicao.y <= 30)                 //impede que vá pra cima dos prédios
+                modo = (rand()%3)+2;
+            posicaoBoto.y -= 2;                         //vai pra baixo
+            
+            sheet = andaBoto(posicao, 3);
+        }
+        else if(modo == 4){
+            if(posicao.x >= 70 && posicao.y <80)
+                modo = (rand()%3)+1;
+            
+            else if(posicao.x >= 70)                 // não vá para os prédios
+                modo = (rand()%3)+2;
+            posicaoBoto.x += 2;                         // vai ṕara direita
+            
+            sheet = andaBoto(posicao, 0);
         }
 }
 
+void pensaoBoto(coordenada vilua){
+
+  if(protago.x >= vilua.x && protago.x <= (vilua.x + larg_personagens) && ytiroVilao[0] <= -95 ){ //protagonista em baixo do vilao
+                                                                                                        // quando atingir o chão, reinicia o tiro
+            xtiroVilao[0] = vilua.x;       //posição do tiro inicial do tiro que segue                 // que segue
+            ytiroVilao[0] = vilua.y;
+        }
+
+        if( ytiroVilao[1] <= -95 ){  //não deixa atirar duas vezes ao mesmo tempo
+            xtiroVilao[1] = vilua.x;                    // são tiros aleatorios
+            ytiroVilao[1] = vilua.y;
+        }
+        if(ytiroVilao[2] <= -95){
+            xtiroVilao[2] = vilua.x;                   // são tiros aleatorios
+            ytiroVilao[2] = vilua.y;
+        }
+    
+    //atira(xtiroVilao[0], ytiroVilao[0], 0);
+    //atira(xtiroVilao[1], ytiroVilao[1], 0);
+    //atira(xtiroVilao[2], ytiroVilao[2], 0);
+    //pensaoPaga(xtiroVilao[0], ytiroVilao[0], 0);
+    //pensaoPaga(xtiroVilao[1], ytiroVilao[1], 1);
+    //pensaoPaga(xtiroVilao[2], ytiroVilao[2], 2);
+}
+
+
+
 void vemBoto(){
   desenhaBoto(posicaoBoto,sheet);
-  botoSaiDaTela();
-        
-    }
+  
+    rageBoto(posicaoBoto);
+    pensaoBoto(posicaoBoto);
+    
+  }
 
 
 
@@ -1202,14 +1282,17 @@ void vemBoto(){
 
 void desenha() {
    
-    inicializacao = 0;
+    //inicializacao = 0;
 
     Background();
-    //vilao_impacto();
-    //andaCarro();
+    vilao_impacto();
+    andaCarro();
+    
+    if(inicializacao != 0){
+      desenhaBoto(posicaoBoto,sheet);
+      botoSaiDaTela();}
 
-    //if(contador_de_viloes == 0){
-    vemBoto();
+    
     
     
     if(inicializacao == 0){
@@ -1221,6 +1304,8 @@ void desenha() {
 
       lose();
     }
+    if(contador_de_viloes == 0)
+      vemBoto();
     
 }
 
@@ -1334,6 +1419,7 @@ void teclado(unsigned char key, int x, int y) {
             }
         tiro = 1;
         modo = (rand()%4)+1;
+        //mod = (rand()%4)+1;
         break;
     }
 }
