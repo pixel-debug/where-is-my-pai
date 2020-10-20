@@ -133,6 +133,8 @@ int ycarro;
 
 int clique_sim = 0;
 int clique_nao = 0;
+int saida = 1;
+int refresh = 1;
                                   /*---------------------------------------------------
                                                     carregando texturas
                                   ----------------------------------------------------*/
@@ -395,7 +397,7 @@ void lose(){
         glEnd();
     }
 }
-void Confirmacao(int i){
+void confirmacao(int i){
 
     if(i == 1){        
         glBindTexture(GL_TEXTURE_2D, idConfirmacao);
@@ -1089,6 +1091,7 @@ void reinicia(){
                                             REINICIA O JOGO QUANDO ACIONADA A TELA 'R'
                                             COM OS VALORES DEFINIDOS LÁ EM RIBA COMO DEFAULT
                                          -------------------------------------------------*/             
+    
     for (int i = 0; i < 16; ++i){
         xvilao[i] = xvilaodefault[i];
         yvilao[i] = yvilaodefault[i];
@@ -1170,6 +1173,7 @@ coordenada andaBoto(coordenada posicao,int modo){ //1 pra esqueda,2 pra cima ,3 
     return aux;
     
 }
+
 void botoSaiDaTela(){
   if(posicaoBoto.x >= 0){        //anda até o meio 
             posicaoBoto.x--;
@@ -1290,22 +1294,21 @@ void desenha() {
     
     if(inicializacao != 0){
       desenhaBoto(posicaoBoto,sheet);
-      botoSaiDaTela();}
+      botoSaiDaTela();
+    }
 
     
     
     
     if(inicializacao == 0){
       VoaCorvo();
-      
-      
       singaro(tiro);
       Protagonista(xpasso[passo], ysentido[sentido]);
-
       lose();
     }
     if(contador_de_viloes == 0)
       vemBoto();
+
     
 }
 
@@ -1373,14 +1376,53 @@ void mouse(int button, int state, int x, int y){
       if(posicaoMouse.x >= 7 && posicaoMouse.x <= 137 && posicaoMouse.y >= 13 && posicaoMouse.y <= 78){ 
         volta += 1; //volta uma página     
       }
-      if(posicaoMouse.x >= 240 && posicaoMouse.x <= 282 && posicaoMouse.y >= 296 && posicaoMouse.y <= 359){ 
+      if(posicaoMouse.x >= 240 && posicaoMouse.x <= 280 && posicaoMouse.y >= 248 && posicaoMouse.y <= 300){ 
         clique_sim = 1; //confirmacao SIM     
+      }
+      if(posicaoMouse.x >= 430 && posicaoMouse.x <= 470 && posicaoMouse.y >= 248 && posicaoMouse.y <= 300){ 
+        clique_nao = 1; //confirmacao SIM     
       }
       
 }
 }
 
 
+void getOUT(){
+    if(saida %2 == 0){
+      confirmacao(1);
+      if(clique_sim == 1){
+        exit(0);
+        }
+        if(clique_nao == 1){
+          saida = 1;
+          clique_nao = 0;
+        }
+    }
+    if(saida == 1){
+        confirmacao(0);
+    }
+}
+
+void refressh(){
+    if(refresh %2 == 0){
+      confirmacao(1);
+      
+      if(clique_sim == 1){
+        reinicia();
+        clique_sim = 0;
+        refresh = 1;
+        }
+        if(clique_nao == 1){
+            refresh = 1;
+          
+        }
+    }
+    if(refresh == 1){
+        confirmacao(0);
+        clique_nao = 0;
+        clique_sim = 0;
+}
+}
 void teclado(unsigned char key, int x, int y) {
     switch (key) {
     case 'a':
@@ -1392,17 +1434,11 @@ void teclado(unsigned char key, int x, int y) {
           ladotiro = 2;
         break;
     case 27:
-        Confirmacao(1); // exibe mensagem de confirmação 
-
-        if(clique_sim == 1 /*&& posição do mouse/quadradinho no yes*/)
-              printf("%dCLIQUE\n", clique_sim);
-              exit(0);
+        saida += 1;
 
         break;
     case 'r':
-        Confirmacao(1); // exibe mensagem de confirmação 
-        if(clique_sim == 1 /*&& posição do mouse no yes*/)
-             reinicia();
+        refresh +=1;
         break;
  /*   case 'p':
         pausa();
@@ -1423,6 +1459,9 @@ void teclado(unsigned char key, int x, int y) {
         break;
     }
 }
+
+
+
 void atualiza() {
     glutPostRedisplay();
 }
@@ -1434,6 +1473,8 @@ void jogo(){
   menu(start);
   if(start == 1){
     desenha();
+    getOUT();
+    refressh();
     volta = 3;
     creditos = 2;
     howtopray = 2;
