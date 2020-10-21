@@ -1262,12 +1262,7 @@ void pensaoBoto(coordenada vilua){
             ytiroVilao[2] = vilua.y;
         }
     
-    //atira(xtiroVilao[0], ytiroVilao[0], 0);
-    //atira(xtiroVilao[1], ytiroVilao[1], 0);
-    //atira(xtiroVilao[2], ytiroVilao[2], 0);
-    //pensaoPaga(xtiroVilao[0], ytiroVilao[0], 0);
-    //pensaoPaga(xtiroVilao[1], ytiroVilao[1], 1);
-    //pensaoPaga(xtiroVilao[2], ytiroVilao[2], 2);
+
 }
 
 
@@ -1280,7 +1275,13 @@ void vemBoto(){
     
   }
 
-
+int pausar = 1;
+void pause(){
+  if(pausar)
+    pausar = 0;
+  else
+    pausar = 1;
+}
 
 
 
@@ -1289,27 +1290,28 @@ void desenha() {
     //inicializacao = 0;
 
     Background();
-    vilao_impacto();
-    andaCarro();
-    
-    if(inicializacao != 0){
-      desenhaBoto(posicaoBoto,sheet);
-      botoSaiDaTela();
-    }
+    if(pausar){
+      vilao_impacto();
+      andaCarro();
+      
+      if(inicializacao != 0){
+        desenhaBoto(posicaoBoto,sheet);
+        botoSaiDaTela();
+      }
 
-    
-    
-    
-    if(inicializacao == 0){
-      VoaCorvo();
-      singaro(tiro);
-      Protagonista(xpasso[passo], ysentido[sentido]);
-      lose();
-    }
-    if(contador_de_viloes == 0)
-      vemBoto();
+      
+      
+      
+      if(inicializacao == 0){
+        VoaCorvo();
+        singaro(tiro);
+        Protagonista(xpasso[passo], ysentido[sentido]);
+        lose();
+      }
+      if(contador_de_viloes == 0)
+        vemBoto();
 
-    
+    }
 }
 
 
@@ -1396,6 +1398,7 @@ void getOUT(){
         if(clique_nao == 1){
           saida = 1;
           clique_nao = 0;
+          pause();
         }
     }
     if(saida == 1){
@@ -1414,7 +1417,7 @@ void refressh(){
         }
         if(clique_nao == 1){
             refresh = 1;
-          
+            pause();
         }
     }
     if(refresh == 1){
@@ -1434,16 +1437,17 @@ void teclado(unsigned char key, int x, int y) {
           ladotiro = 2;
         break;
     case 27:
+        pause();
         saida += 1;
-
         break;
     case 'r':
+        pause();
         refresh +=1;
         break;
- /*   case 'p':
-        pausa();
+    case 'p':
+        pause();
         break;
-*/
+
     case 32:   //espaço
         passo = 2;        //coordenadas do sheet
         sentido = 0; 
