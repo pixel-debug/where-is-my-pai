@@ -11,7 +11,8 @@ Trabalho de Computação Gráfica
 *****************************************************
 Compilação do programa:
 
-gcc galaxian.c  -lGL -lglut -lGLEW -lGLU -lSOIL -lm
+gcc galaxian.c  -lGL -lglut -lGLEW -lGLU -lSOIL -lm -lSDL -lSDL_mixer
+
 
 ./a.out
 
