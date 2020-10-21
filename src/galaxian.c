@@ -841,7 +841,7 @@ void pensaoPaga(int xpensao, float ypensao, int i){
                                          -------------------------------------------------*/
     if((xpensao + 7) >= protago.x && (xpensao + 7) <= (protago.x + larg_personagens) ){ //hitbox em x e em y, melhores valores
         if((ypensao + 10) <= protago.y && (ypensao + 10) >= (protago.y - alt_personagens) ){
-            //vidas--;
+            vidas--;
             xtiroVilao[i] = 140; //faz o tiro sumir quando acerta
             ytiroVilao[i] = -150;
         }
@@ -1308,7 +1308,6 @@ void vemBoto(){
   //botoVolta();
   pensaoBoto(posicaoBoto);
   impactoBoto(posicaoBoto);
-  printf("%d", vidaBoto);
   }
 
 
