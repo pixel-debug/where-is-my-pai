@@ -129,7 +129,13 @@ int ladotiro = 0;
 int xcarro = -250;
 int ycarro;
 
+coordenada sheet = {0,1};
+const coordenada dimensoesBoto = {20,40};
+coordenada posicaoBoto = {0,40};
+int passoBoto = 0;
+int controle = 0;
 
+int pausar = 1;
 
 int clique_sim = 0;
 int clique_nao = 0;
@@ -155,6 +161,7 @@ GLuint idConfirmacao;
 GLuint idMenu;
 GLuint idCreditos;
 GLuint idHowtopray;
+GLuint idLoseInvertido;
 GLuint carregaTextura(const char* arquivo) {
     GLuint idTextura = SOIL_load_OGL_texture(
                            arquivo,
@@ -205,6 +212,7 @@ void inicializa() {
     idPensao = carregaTextura("pensao.png");
     
     idLose = carregaTextura("lose.png");
+    idLoseInvertido = carregaTextura("loseInvertido.jpeg");
        
     idCarro = carregaTextura("carro.png");
 
@@ -372,6 +380,31 @@ void Background(){
 
 }
 
+void loseInvertido(){
+
+    if(vidaBoto <= 0){
+        glBindTexture(GL_TEXTURE_2D, idLoseInvertido);
+                                                 /*------------------------------------
+                                                     COLOCA O BACKGROUND DO GAME 0VER
+                                                 --------------------------------------*/
+            glBegin( GL_QUADS );
+
+            glTexCoord2f(0, 1);
+            glVertex3f(-100.0, 100.0, 0.0);
+
+            glTexCoord2f(0, 0);
+            glVertex3f(-100.0, -140.0, 0.0);
+
+            glTexCoord2f(1, 0);
+            glVertex3f(100.0, -140.0, 0.0);
+
+            glTexCoord2f(1, 1);
+            glVertex3f(100.0, 100.0, 0.0);
+
+
+        glEnd();
+    }
+}
 void lose(){
 
     if(vidas <= -1){
@@ -883,7 +916,7 @@ void SaiDaTela(int i,coordenada vilua){
 
 void impacto(int i, coordenada posicao){
     if(xtiroProta+5 >= xcarro && xtiroProta+5 <= (xcarro + larg_carro) ){
-      if(ytiroProta+10 >= ycarro && ytiroProta+10 <= ycarro+alt_carro)
+      if(ytiroProta+10 >= ycarro && ytiroProta+10 <= ycarro+alt_carro )
         ytiroProta = 110;
     }
                                         /*----------------------------------------------------
@@ -893,12 +926,8 @@ void impacto(int i, coordenada posicao){
         if(xtiroProta+5 >= posicao.x && xtiroProta + 5 <= (posicao.x  + larg_personagens)){ //intervalo de x
             if(ytiroProta >= posicao.y-10 && ytiroProta <= (posicao.y + alt_personagens)-10 && ytiroProta != 104){ // intervalo de y
                 sai[i] = 1;
-
-                if(modotiro == 1 && ytiroProta >= 60)
-                  ytiroProta = 110;
-
-                else 
-                  ytiroProta = 110; // valor pra y fora da margem de erro
+                if(modotiro != 1)
+                  ytiroProta = 110;                // valor pra y fora da margem de erro
             }
         }
         pontos++;
@@ -1127,8 +1156,7 @@ void reinicia(){
     corvox = 95;
 }
 
-coordenada sheet = {0,1};
-const coordenada dimensoesBoto = {20,40};
+
 
 void desenhaBoto(coordenada posicao, coordenada sheet){
 glBindTexture(GL_TEXTURE_2D, idBoto);
@@ -1150,12 +1178,11 @@ glBindTexture(GL_TEXTURE_2D, idBoto);
                 glEnd();
             
 }
-coordenada posicaoBoto = {0,40};
 
 
 
-int passoBoto = 0;
-int controle = 0;
+
+
 coordenada andaBoto(coordenada posicao,int modo){ //1 pra esqueda,2 pra cima ,3 pra baixo, 0 pra direita
     controle++;
     if(controle%5 == 0){
@@ -1265,17 +1292,26 @@ void pensaoBoto(coordenada vilua){
 
 }
 
-
+void impactoBoto(coordenada posicao){
+  if(xtiroProta+5 >= posicao.x && xtiroProta + 5 <= (posicao.x  + larg_personagens)){ //intervalo de x
+    if(ytiroProta >= posicao.y-10 && ytiroProta <= (posicao.y + alt_personagens)-10 && ytiroProta != 104){ // intervalo de y
+      vidaBoto--;
+      ytiroProta = 110;
+    }
+  }
+}
 
 void vemBoto(){
+  modotiro = 2;
   desenhaBoto(posicaoBoto,sheet);
-  
-    rageBoto(posicaoBoto);
-    pensaoBoto(posicaoBoto);
-    
+  rageBoto(posicaoBoto);
+  //botoVolta();
+  pensaoBoto(posicaoBoto);
+  impactoBoto(posicaoBoto);
+  printf("%d", vidaBoto);
   }
 
-int pausar = 1;
+
 void pause(){
   if(pausar)
     pausar = 0;
@@ -1308,10 +1344,11 @@ void desenha() {
         Protagonista(xpasso[passo], ysentido[sentido]);
         lose();
       }
-      if(contador_de_viloes == 0)
+      if(contador_de_viloes == 0 && vidaBoto > 0)
         vemBoto();
 
     }
+    loseInvertido();
 }
 
 
@@ -1412,6 +1449,7 @@ void refressh(){
       
       if(clique_sim == 1){
         reinicia();
+        pause();
         clique_sim = 0;
         refresh = 1;
         }
