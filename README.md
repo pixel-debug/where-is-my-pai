@@ -12,6 +12,7 @@ Trabalho de Computação Gráfica
 Compilação do programa:
 
 gcc galaxian.c  -lGL -lglut -lGLEW -lGLU -lSOIL -lm
+
 ./a.out
 
 *****************************************************
