@@ -16,6 +16,13 @@ gcc galaxian.c  -lGL -lglut -lGLEW -lGLU -lSOIL -lm -lSDL -lSDL_mixer
 
 ./a.out
 
+Makefile:
+
+gcc galaxian.c -o galaxian -lGL -lglut -lGLEW -lGLU -lSOIL -lm -lSDL -lSDL_mixer
+
+makerun
+
+
 *****************************************************
 Lista de itens presentes no jogo
 
@@ -31,8 +38,8 @@ Lista de itens presentes no jogo
 
 6- Controle via mouse (acesso ao menu)
 
-7- Manter razão de aspecto
+7- Telas
 
-8- Telas
+8- Sons
 
-9- Sons
+9- Paleta de cores e direção de arte ***CopyRight***
