@@ -22,6 +22,7 @@ int start = 0;
 int creditos = 0;
 int howtopray = 0;
 int volta = 1;
+int chave = 0;
 
 struct ponto posicaoMouse;
 // foi para corrigir um bug, não entendemos o por quê que funcionou assim, mas tem toda uma logica por trás
@@ -121,6 +122,7 @@ int refresh = 1;
 Mix_Chunk* somTiro;
 Mix_Music* musicMenu;
 Mix_Music* musicGameOver;
+Mix_Music* musicWin;
                                   /*---------------------------------------------------
                                                     carregando texturas
                                   ----------------------------------------------------*/
