@@ -39,7 +39,7 @@ void inicializaVilao(){
   idVilao[3] = carregaTextura("imagens/personagens/sheet_vilao_4.png");
   idVilao[4] = carregaTextura("imagens/personagens/sheet_vilao_5.png");
   idVilao[5] = carregaTextura("imagens/personagens/sheet_vilao_6.png");
-  idBoto = carregaTextura("imagens/personagens/sheet_boto.png");
+  idBoto = carregaTextura("imagens/personagens/boto_sheet.png");
 }
 
 void inicializatiro(){
@@ -71,9 +71,10 @@ void inicializa() {
   glEnable(GL_BLEND );
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT,2,4096);
-  musicMenu = Mix_LoadMUS("sons/meu_pai_foi_comprar_cigarro.mp3");
+  musicMenu = Mix_LoadMUS("sons/cade_meu_pai.mp3");
   somTiro = Mix_LoadWAV("sons/tosse.wav");
   musicGameOver = Mix_LoadMUS("sons/butter_cup.mp3");
+  musicWin = Mix_LoadMUS("sons/eu_achei.mp3");
   inicializafundos();
   inicializatiro();
   inicializaVilao();
@@ -673,6 +674,7 @@ void SaiDaTela(int i,coordenada vilua){
                                             CANTO SUPERIOR ESQUERDO DA TELA
                                          -------------------------------------------------*/
   if(sai[i]){ //assume 1 quando o vilão é atingido
+    
     if(vilua.x >= 0){        //anda até o meio 
       xvilao[i]--;
       andaVilao(vilua, i, 1);
@@ -707,12 +709,13 @@ void impacto(int i, coordenada posicao){
     if(xtiroProta+5 >= posicao.x && xtiroProta + 5 <= (posicao.x  + larg_personagens)){ //intervalo de x
       if(ytiroProta >= posicao.y-10 && ytiroProta <= (posicao.y + alt_personagens)-10 && ytiroProta != 104){ // intervalo de y
         sai[i] = 1;
+        Mix_PlayChannel(-1, somTiro,0);
         if(modotiro != 1)
           ytiroProta = 110;                // valor pra y fora da margem de erro
       }
     }
   pontos++;
-  }
+  } 
 
   SaiDaTela(i, posicao);
 }
@@ -1226,26 +1229,29 @@ void atualiza() {
   glutPostRedisplay();
 }
 
-void soltaOSom(int start){
-  if(start != 1  && !Mix_PlayingMusic()){
+void soltaOSom(){
+  if(start == 0  && !Mix_PlayingMusic()){
     Mix_PlayMusic(musicMenu, -1);
+    Mix_VolumeMusic(32);
   }
-  if(vidas <= -1 && start ==1 && !Mix_PlayingMusic()){
+  if(start == 1 && vidas <= -1 && !Mix_PlayingMusic()){
     Mix_PlayMusic(musicGameOver, -1);
   }
-  /*
-  ESSE DAQUI É O BARRULHO QUANDO O VILÃO É ATINGIDO
-Mix_PlayChannel(-1, somTiro,0);
-Mix_VolumeChunk(somTiro, 96);
-*/
+  if(start == 1 && vidas >-1 && vidaBoto > 0){
+    Mix_HaltMusic();
+  }
+  if(vidaBoto == 0 && !Mix_PlayingMusic()){
+    Mix_PlayMusic(musicWin, -1);
+  }
 }
+
 void jogo(){
   glClear(GL_COLOR_BUFFER_BIT);
   glEnable(GL_TEXTURE_2D);
   
   menu(start);
   
-  soltaOSom(start);
+  soltaOSom();
     
   if(start == 1){
     desenha();
