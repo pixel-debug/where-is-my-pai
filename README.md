@@ -6,7 +6,7 @@ Trabalho de Computação Gráfica
  
 *Discentes: Ítalo Gustavo Donato Cordeiro e Marina Bernardes Diniz
  
-[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/https://youtu.be/gDFvFrBTERk/0.jpg)](https://www.youtube.com/watch?v=https://youtu.be/gDFvFrBTERk)
+https://www.youtube.com/watch?v=gDFvFrBTERk
 
 
 *****************************************************
