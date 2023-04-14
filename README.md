@@ -15,8 +15,9 @@ YouTube link:
        <a href="http://www.youtube.com/watch?feature=player_embedded&v=gDFvFrBTERk
        " target="_blank"><img src="http://img.youtube.com/vi/gDFvFrBTERk/0.jpg" 
        alt="Where is my pai" width="240" height="180" border="10" /></a>
-
-       https://www.youtube.com/watch?v=gDFvFrBTERk
+       <p align="center">
+              https://www.youtube.com/watch?v=gDFvFrBTERk
+        </p>
 </p>
 
 </br>
@@ -39,6 +40,8 @@ makerun
 
 
 </br>
+
+
 Lista de itens presentes no jogo
 ------
 1- Texturas animadas 
@@ -58,7 +61,9 @@ Lista de itens presentes no jogo
 8- Sons
 
 9- Paleta de cores e direção de arte ***CopyRight***
+
 </br>
+
 </br>
 
 Involvidos
