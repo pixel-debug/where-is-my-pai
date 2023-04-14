@@ -1,32 +1,35 @@
  
- # Galaxian.c
-Trabalho de Computação Gráfica
-
-*Docente: Glender Brás
+ Galaxian - Where Is My Pai
+ ======
  
-*Discentes: Ítalo Gustavo Donato Cordeiro e Marina Bernardes Diniz
- 
-https://www.youtube.com/watch?v=gDFvFrBTERk
+Trabalho realizado durante a disciplina de Computação Gráfica do CEFET-MG. Escrito em linguagem `C++` utilizando bibliotecas como: `freeGLUT`, `SOIL`, `SDL_mixer` e `OpenGL`.
 
+YouTube link:
+-----
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=gDFvFrBTERk
+" target="_blank"><img src="http://img.youtube.com/vi/gDFvFrBTERk/0.jpg" 
+alt="Where is my pai" width="240" height="180" border="10" /></a>
 
-*****************************************************
+-  https://www.youtube.com/watch?v=gDFvFrBTERk
+
 Compilação do programa:
-
+------
+1 - Compilação sem MakeFile 
+```
 gcc galaxian.c  -lGL -lglut -lGLEW -lGLU -lSOIL -lm -lSDL -lSDL_mixer
-
-
 ./a.out
+```
 
-Makefile:
-
+2 - Compilação com MakeFile
+```
 gcc galaxian.c -o galaxian -lGL -lglut -lGLEW -lGLU -lSOIL -lm -lSDL -lSDL_mixer
-
 makerun
 
+```
 
-*****************************************************
+
 Lista de itens presentes no jogo
-
+------
 1- Texturas animadas 
 
 2- Fundo lindão e com movimento/animação
@@ -44,3 +47,16 @@ Lista de itens presentes no jogo
 8- Sons
 
 9- Paleta de cores e direção de arte ***CopyRight***
+
+
+Involvidos
+------
+- Docente: Glender Brás
+
+- Discentes: Diego Simoẽs Maria, Ítalo Gustavo Donato Cordeiro e Marina Bernardes Diniz
+
+
+
+
+
+
