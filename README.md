@@ -5,7 +5,7 @@
 
 </br>
  
-Trabalho realizado durante a disciplina de Computação Gráfica do CEFET-MG. Escrito em linguagem `C++` utilizando bibliotecas como: `freeGLUT`, `SOIL`, `SDL_mixer` e `OpenGL`.
+Trabalho realizado durante a disciplina de Computação Gráfica do CEFET-MG. Escrito em linguagem `C` utilizando bibliotecas como: `freeGLUT`, `SOIL`, `SDL_mixer` e `OpenGL`.
 </br>
 
 
