@@ -12,14 +12,16 @@ Trabalho realizado durante a disciplina de Computação Gráfica do CEFET-MG. Es
 YouTube link:
 -----
 <p align="center">
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=gDFvFrBTERk
-" target="_blank"><img src="http://img.youtube.com/vi/gDFvFrBTERk/0.jpg" 
-alt="Where is my pai" width="240" height="180" border="10" /></a>
+       <a href="http://www.youtube.com/watch?feature=player_embedded&v=gDFvFrBTERk
+       " target="_blank"><img src="http://img.youtube.com/vi/gDFvFrBTERk/0.jpg" 
+       alt="Where is my pai" width="240" height="180" border="10" /></a>
 
-https://www.youtube.com/watch?v=gDFvFrBTERk
+       https://www.youtube.com/watch?v=gDFvFrBTERk
 </p>
 
 </br>
+
+
 Compilação do programa:
 ------
 1 - Compilação sem MakeFile 
