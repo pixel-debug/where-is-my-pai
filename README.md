@@ -66,7 +66,7 @@ Lista de itens presentes no jogo
 
 </br>
 
-Involvidos
+Envolvidos
 ------
 - Docente: Glender Brás
 
